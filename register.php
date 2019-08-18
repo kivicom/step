@@ -7,8 +7,8 @@ if(!empty($_POST['name']) || !empty($_POST['email']) || !empty($_POST['password'
 
     $name = $_POST['name'];
     $email = $_POST['email'];
-    $password = $_POST['password'];
-    $password_confirmation = $_POST['password_confirmation'];
+    $password = md5($_POST['password']);
+    $password_confirmation = md5($_POST['password_confirmation']);
 
     $query = "INSERT INTO `users` (`name`, `email`, `password`) VALUE ('{$name}', '{$email}', '{$password}')";
     $query = mysqli_query($link, $query);
