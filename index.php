@@ -1,3 +1,13 @@
+<?php
+require_once 'db.php';
+
+$table = 'comments'; //задаем имя таблицы в переменной
+$result = mysqli_query($link, "SELECT*FROM ".$table." WHERE id > 0")or die( mysqli_error($link) );
+
+//Проверяем что же нам отдала база данных, если null – то какие-то проблемы:
+for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,29 +65,19 @@
                             <div class="alert alert-success" role="alert">
                                 Комментарий успешно добавлен
                             </div>
-                            <?php
-                            //Создаем массив с комментариями. Создаем асоциативный массив.
-                            $comments = [
-                                [
-                                    'name' => 'John Doe',
-                                    'date' => '12/10/2025',
-                                    'text' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
-                                                Saepeaspernatur, ullam doloremque deleniti, sequi obcaecati.',
-                                ],
-                                [
-                                    'name' => 'Mikaele',
-                                    'date' => '12/10/2015',
-                                    'text' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
-                                                Saepeaspernatur, ullam doloremque deleniti, sequi obcaecati.',
-                                ],
-                            ];
-                            ?>
+
+                            <!--12/10/2025-->
+
                             <?php foreach ($comments as $comment) :?>
                             <div class="media">
                                 <img src="img/no-user.jpg" class="mr-3" alt="..." width="64" height="64">
                                 <div class="media-body">
                                     <h5 class="mt-0"><?php echo $comment['name'];?></h5> <!--Выводим имя коментатора-->
-                                    <span><small><?php echo $comment['date'];?></small></span> <!--Выводим дату когда оставили комент-->
+                                    <span>
+                                        <small>
+                                            <?php echo date('d/m/Y', strtotime($comment['date']));?>
+                                        </small>
+                                    </span> <!--Выводим дату когда оставили комент-->
                                     <p>
                                         <?php echo $comment['text'];?><!--Выводим сам текст комента-->
                                     </p>
@@ -93,7 +93,7 @@
                         <div class="card-header"><h3>Оставить комментарий</h3></div>
 
                         <div class="card-body">
-                            <form action="/store" method="post">
+                            <form action="/store.php" method="post">
                                 <div class="form-group">
                                     <label for="exampleFormControlTextarea1">Имя</label>
                                     <input name="name" class="form-control" id="exampleFormControlTextarea1" />
