@@ -1,8 +1,9 @@
 <?php
 require_once 'db.php';
+session_start();
 
 $table = 'comments'; //задаем имя таблицы в переменной
-$result = mysqli_query($link, "SELECT*FROM ".$table." WHERE id > 0")or die( mysqli_error($link) );
+$result = mysqli_query($link, "SELECT*FROM ".$table." WHERE id > 0 ORDER BY id DESC")or die( mysqli_error($link) );
 
 //Проверяем что же нам отдала база данных, если null – то какие-то проблемы:
 for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
@@ -44,10 +45,10 @@ for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
                     <li class="nav-item">
-                        <a class="nav-link" href="login.html">Login</a>
+                        <a class="nav-link" href="login.php">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="register.html">Register</a>
+                        <a class="nav-link" href="register.php">Register</a>
                     </li>
                 </ul>
             </div>
@@ -62,9 +63,22 @@ for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
                         <div class="card-header"><h3>Комментарии</h3></div>
 
                         <div class="card-body">
+                            <?php if(isset($_SESSION['com_ok'])):?>
                             <div class="alert alert-success" role="alert">
-                                Комментарий успешно добавлен
+                                <?php
+                                    echo $_SESSION['com_ok'];
+                                    unset($_SESSION['com_ok']);
+                                ?>
                             </div>
+                            <?php endif;?>
+                            <?php if(isset($_SESSION['com_err'])):?>
+                            <div class="alert alert-danger" role="alert">
+                                <?php
+                                    echo $_SESSION['com_err'];
+                                    unset($_SESSION['com_err']);
+                                ?>
+                            </div>
+                            <?php endif;?>
 
                             <!--12/10/2025-->
 
@@ -97,10 +111,18 @@ for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
                                 <div class="form-group">
                                     <label for="exampleFormControlTextarea1">Имя</label>
                                     <input name="name" class="form-control" id="exampleFormControlTextarea1" />
+                                    <?php if(isset($_SESSION['name_err'])):?>
+                                        <span class="text-danger">Ошибка. Поле имя не заполненно</span>
+                                    <?php unset($_SESSION['name_err']);?>
+                                    <?php endif;?>
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleFormControlTextarea1">Сообщение</label>
                                     <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <?php if(isset($_SESSION['text_err'])):?>
+                                        <span class="text-danger">Ошибка. Поле имя не заполненно</span>
+                                        <?php unset($_SESSION['text_err']);?>
+                                    <?php endif;?>
                                 </div>
                                 <button type="submit" class="btn btn-success">Отправить</button>
                             </form>
