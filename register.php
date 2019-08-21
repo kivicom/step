@@ -11,11 +11,25 @@ function checkEmail($email)
     return false;
 }
 
+function checkPassword($pass, $pass_confirm)
+{
+    if(($pass === $pass_confirm) && (strlen($pass) >= 6)){
+        return true;
+    }
+    return false;
+}
+
 
 
 if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['password_confirmation'])){
     if(!checkEmail($_POST['email'])){
         $_SESSION['email_err'] = 'Неправильный формат E-mail';
+        echo header('Location: http://marlinstep.loc/register.php');
+        exit();
+    }
+
+    if(!checkPassword($_POST['password'], $_POST['password_confirmation'])){
+        $_SESSION['pass_err'] = 'Пароли не совпадают или пароль содержит менее 6 символов';
         echo header('Location: http://marlinstep.loc/register.php');
         exit();
     }
@@ -131,6 +145,11 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
                                     <div class="col-md-6">
                                         <input id="password-confirm" type="password" class="form-control" name="password_confirmation"  autocomplete="new-password">
                                     </div>
+                                    <?php if(isset($_SESSION['pass_err'])):?>
+                                        <div class="alert alert-danger" role="alert">
+                                            <?php echo $_SESSION['pass_err']; unset($_SESSION['pass_err']);?>
+                                        </div>
+                                    <?php endif;?>
                                 </div>
 
                                 <div class="form-group row mb-0">
