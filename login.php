@@ -1,27 +1,39 @@
 <?php
 session_start();
 
+function checkEmail($email)
+{
+    if(filter_var($email,FILTER_VALIDATE_EMAIL)){
+        return true;
+    }
+    return false;
+}
+
 if(!empty($_POST['email']) && !empty($_POST['password'])){
     require_once 'db.php';
 
     $query = mysqli_query($link, "SELECT * FROM `users` WHERE `email` = '{$_POST['email']}'");
     $user = mysqli_fetch_assoc($query);
-
-    if($_POST['email'] === $user['email']){
-
-        if(md5($_POST['password']) === $user['password']){
-            foreach ($user as $key => $item) {
-                $_SESSION['user'][$key] = $item;
-                echo header('Location: http://marlinstep.loc/');
+    if(checkEmail($_POST['email'])){
+        if($_POST['email'] === $user['email']){
+            if(md5($_POST['password']) === $user['password']){
+                foreach ($user as $key => $item) {
+                    $_SESSION['user'][$key] = $item;
+                    echo header('Location: http://marlinstep.loc/');
+                    exit();
+                }
+            }else{
+                $_SESSION['pass_err'] = 'Пароль не верный';
+                echo header('Location: http://marlinstep.loc/login.php');
                 exit();
             }
         }else{
-            $_SESSION['pass_err'] = 'Пароль не верный';
+            $_SESSION['email_err'] = 'Email не найден';
             echo header('Location: http://marlinstep.loc/login.php');
             exit();
         }
     }else{
-        $_SESSION['email_err'] = 'Email не найден';
+        $_SESSION['email_err'] = 'Неправильный формат E-mail';
         echo header('Location: http://marlinstep.loc/login.php');
         exit();
     }
