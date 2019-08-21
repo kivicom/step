@@ -11,6 +11,13 @@ function checkEmail($email)
     return false;
 }
 
+function isEmail($email, $is_email){
+    if(in_array($email, $is_email)){
+        return true;
+    }
+    return false;
+}
+
 function checkPassword($pass, $pass_confirm)
 {
     if(($pass === $pass_confirm) && (strlen($pass) >= 6)){
@@ -22,11 +29,26 @@ function checkPassword($pass, $pass_confirm)
 
 
 if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['password_confirmation'])){
+
+    require_once 'db.php';
+
+    $query = mysqli_query($link, "SELECT `email` FROM `users` WHERE `email` = '{$_POST['email']}'")or die( mysqli_error($link) );
+    for ($is_email = ''; $row = mysqli_fetch_assoc($query); $is_email = $row);
+    if(isEmail($_POST['email'], $is_email)){
+        $_SESSION['email_err'] = 'Пользователь с таким E-mail уже существует';
+        echo header('Location: http://marlinstep.loc/register.php');
+        exit();
+    }
+
+
+    //print_r($emails);die();
     if(!checkEmail($_POST['email'])){
         $_SESSION['email_err'] = 'Неправильный формат E-mail';
         echo header('Location: http://marlinstep.loc/register.php');
         exit();
     }
+
+
 
     if(!checkPassword($_POST['password'], $_POST['password_confirmation'])){
         $_SESSION['pass_err'] = 'Пароли не совпадают или пароль содержит менее 6 символов';
@@ -39,17 +61,17 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
     $pass = md5($_POST['password']);
     $password_confirmation = md5($_POST['password_confirmation']);
 
-    require_once 'db.php';
-
     $query = "INSERT INTO `users` (`name`, `email`, `password`) VALUE ('{$name}', '{$email}', '{$pass}')";
     $query = mysqli_query($link, $query);
 
     if($query){
         $_SESSION['register_success'] = 'Вы успешно зарегистрировались. Теперь можете авторизоваться.';
         echo header('Location: /login.php');
+        exit();
     }else{
         $_SESSION['register_error'] = 'Ошибка решистрации. Пожалуйста, повторите позже.';
         echo header('Location : /register.php');
+        exit();
     }
 }
 
