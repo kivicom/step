@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'db.php';
 
 function checkEmail($email)
 {
@@ -8,36 +9,74 @@ function checkEmail($email)
     }
     return false;
 }
+function generateCode($length=6) {
+    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRQSTUVWXYZ0123456789";
+    $code = "";
+    $clen = strlen($chars) - 1;
+    while (strlen($code) < $length) {
 
-if(!empty($_POST['email']) && !empty($_POST['password'])){
-    require_once 'db.php';
+        $code .= $chars[mt_rand(0,$clen)];
+    }
 
-    $query = mysqli_query($link, "SELECT * FROM `users` WHERE `email` = '{$_POST['email']}'");
+    return $code;
+
+}
+
+if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
+    $query = mysqli_query($link,"SELECT * FROM `users` WHERE id = '{$_COOKIE['id']}' LIMIT 1");
     $user = mysqli_fetch_assoc($query);
-    if(checkEmail($_POST['email'])){
-        if($_POST['email'] === $user['email']){
-            if(md5($_POST['password']) === $user['password']){
-                foreach ($user as $key => $item) {
-                    $_SESSION['user'][$key] = $item;
-                    echo header('Location: http://marlinstep.loc/');
+
+    if(($user['user_hash'] !== $_COOKIE['hash']) || ($user['id'] !== $_COOKIE['id'])){
+        setcookie("id", "", time() - 3600*24*30*12, "/");
+        setcookie("hash", "", time() - 3600*24*30*12, "/");
+
+        if( !empty( $_POST['email'] ) && !empty( $_POST['password'] ) ) {
+            $query = mysqli_query($link, "SELECT * FROM `users` WHERE `email` = '{$_POST['email']}' LIMIT 1");
+            $user = mysqli_fetch_assoc($query);
+            if(checkEmail($_POST['email'])){
+                if($_POST['email'] === $user['email']){
+                    if(md5($_POST['password']) === $user['password']){
+                        foreach ($user as $key => $item) {
+                            $_SESSION['user'][$key] = $item;
+                        }
+                        if($_POST['remember']){
+                            $hash = md5(generateCode(10));
+                            mysqli_query($link,"UPDATE `users` SET `user_hash`='".$hash."'  WHERE id='".$user['id']."'");
+                            setcookie("id", $user['id'], time()+60*60*24*30);
+                            setcookie("hash", $hash, time()+60*60*24*30);
+                        }
+
+                        echo header('Location: http://marlinstep.loc/');
+                        exit();
+                    }else{
+                        $_SESSION['pass_err'] = 'Пароль не верный';
+                        echo header('Location: http://marlinstep.loc/login.php');
+                        exit();
+                    }
+                }else{
+                    $_SESSION['email_err'] = 'Email не найден';
+                    echo header('Location: http://marlinstep.loc/login.php');
                     exit();
                 }
             }else{
-                $_SESSION['pass_err'] = 'Пароль не верный';
+                $_SESSION['email_err'] = 'Неправильный формат E-mail';
                 echo header('Location: http://marlinstep.loc/login.php');
                 exit();
             }
-        }else{
-            $_SESSION['email_err'] = 'Email не найден';
-            echo header('Location: http://marlinstep.loc/login.php');
-            exit();
         }
     }else{
-        $_SESSION['email_err'] = 'Неправильный формат E-mail';
-        echo header('Location: http://marlinstep.loc/login.php');
-        exit();
+        foreach ($user as $key => $item) {
+            $_SESSION['user'][$key] = $item;
+        }
     }
+
+}else{
+
+    print "Включите куки";
+
 }
+
+
 
 ?>
 <!DOCTYPE html>
