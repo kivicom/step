@@ -21,62 +21,76 @@ function generateCode($length=6) {
     return $code;
 
 }
-
+//Проверяем куки на существование
 if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
+    //Если куки существуют достаем из базы данные пользователя где ID = $_COOKIE['id']
     $query = mysqli_query($link,"SELECT * FROM `users` WHERE id = '{$_COOKIE['id']}' LIMIT 1");
     $user = mysqli_fetch_assoc($query);
 
-    if(($user['user_hash'] !== $_COOKIE['hash']) || ($user['id'] !== $_COOKIE['id'])){
+    //Сравниваем данные из кукисов м данными из БД
+    if(($user['user_hash'] === $_COOKIE['hash']) || ($user['id'] === $_COOKIE['id'])){
+        //Если данные совпадают, то записываем их в сессию
+        foreach ($user as $key => $item) {
+            $_SESSION['user'][$key] = $item;
+        }
+        echo header('Location: /');
+        exit();
+    }else{
+        // Если данные не совпали, удаляем куки
         setcookie("id", "", time() - 3600*24*30*12, "/");
         setcookie("hash", "", time() - 3600*24*30*12, "/");
+    }
+}else{
+    /*Если куков не существует, то проходим процедуру авторизации как полагается. Проверяем на пустые поля*/
+    if( !empty( $_POST['email'] ) && !empty( $_POST['password'] ) ) {
+        //Делаем выборку из базы данных пользователя по переданному $_POST['email']
+        $query = mysqli_query($link, "SELECT * FROM `users` WHERE `email` = '{$_POST['email']}' LIMIT 1");
+        $user = mysqli_fetch_assoc($query);
 
-        if( !empty( $_POST['email'] ) && !empty( $_POST['password'] ) ) {
-            $query = mysqli_query($link, "SELECT * FROM `users` WHERE `email` = '{$_POST['email']}' LIMIT 1");
-            $user = mysqli_fetch_assoc($query);
-            if(checkEmail($_POST['email'])){
-                if($_POST['email'] === $user['email']){
-                    if(md5($_POST['password']) === $user['password']){
-                        foreach ($user as $key => $item) {
-                            $_SESSION['user'][$key] = $item;
-                        }
-                        if($_POST['remember']){
-                            $hash = md5(generateCode(10));
-                            mysqli_query($link,"UPDATE `users` SET `user_hash`='".$hash."'  WHERE id='".$user['id']."'");
-                            setcookie("id", $user['id'], time()+60*60*24*30);
-                            setcookie("hash", $hash, time()+60*60*24*30);
-                        }
+        //Проверяем на валидность формата
+        if(checkEmail($_POST['email'])){
 
-                        echo header('Location: http://marlinstep.loc/');
-                        exit();
-                    }else{
-                        $_SESSION['pass_err'] = 'Пароль не верный';
-                        echo header('Location: http://marlinstep.loc/login.php');
-                        exit();
+            //Проверяем на сравнение с email из $_POST['email'] и Из БД
+            if($_POST['email'] === $user['email']){
+
+                //Проверяем на сравнение с password из $_POST['password'] и Из БД
+                if(md5($_POST['password']) === $user['password']){
+
+                    //Если данные совпадают, то записываем их в сессию
+                    foreach ($user as $key => $item) {
+                        $_SESSION['user'][$key] = $item;
                     }
+
+                    //Если пользователь отметил "Запомнить меня"
+                    if($_POST['remember']){
+                        //Генерируем хеш
+                        $hash = md5(generateCode(10));
+                        //Добавляем в таблицу данного юзера хеш
+                        mysqli_query($link,"UPDATE `users` SET `user_hash`='".$hash."'  WHERE id='".$user['id']."'");
+                        //Записываем в куки
+                        setcookie("id", $user['id'], time()+60*60*24*30);
+                        setcookie("hash", $hash, time()+60*60*24*30);
+                    }
+
+                    echo header('Location: http://marlinstep.loc/');
+                    exit();
                 }else{
-                    $_SESSION['email_err'] = 'Email не найден';
+                    $_SESSION['pass_err'] = 'Пароль не верный';
                     echo header('Location: http://marlinstep.loc/login.php');
                     exit();
                 }
             }else{
-                $_SESSION['email_err'] = 'Неправильный формат E-mail';
+                $_SESSION['email_err'] = 'Email не найден';
                 echo header('Location: http://marlinstep.loc/login.php');
                 exit();
             }
-        }
-    }else{
-        foreach ($user as $key => $item) {
-            $_SESSION['user'][$key] = $item;
+        }else{
+            $_SESSION['email_err'] = 'Неправильный формат E-mail';
+            echo header('Location: http://marlinstep.loc/login.php');
+            exit();
         }
     }
-
-}else{
-
-    print "Включите куки";
-
 }
-
-
 
 ?>
 <!DOCTYPE html>
@@ -85,7 +99,7 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Comments</title>
+    <title>Login</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -131,7 +145,6 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
                 <div class="col-md-8">
                     <div class="card">
                         <div class="card-header">Login</div>
-
                         <div class="card-body">
                             <form method="POST" action="">
 
