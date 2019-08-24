@@ -24,8 +24,11 @@ function generateCode($length=6) {
 //Проверяем куки на существование
 if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
     //Если куки существуют достаем из базы данные пользователя где ID = $_COOKIE['id']
-    $query = mysqli_query($link,"SELECT * FROM `users` WHERE id = '{$_COOKIE['id']}' LIMIT 1");
-    $user = mysqli_fetch_assoc($query);
+    $query = "SELECT * FROM `users` WHERE id = :id LIMIT 1";
+    $statement = $pdo->prepare($query);
+    $statement->execute(array(':id' => $_COOKIE['id']));
+    $user = $statement->fetchAll(PDO::FETCH_ASSOC);
+
 
     //Сравниваем данные из кукисов м данными из БД
     if(($user['user_hash'] === $_COOKIE['hash']) || ($user['id'] === $_COOKIE['id'])){
@@ -44,8 +47,11 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
     /*Если куков не существует, то проходим процедуру авторизации как полагается. Проверяем на пустые поля*/
     if( !empty( $_POST['email'] ) && !empty( $_POST['password'] ) ) {
         //Делаем выборку из базы данных пользователя по переданному $_POST['email']
-        $query = mysqli_query($link, "SELECT * FROM `users` WHERE `email` = '{$_POST['email']}' LIMIT 1");
-        $user = mysqli_fetch_assoc($query);
+        $query = "SELECT* FROM `users` WHERE `email` = ? LIMIT 1";
+        $statement = $pdo->prepare($query);
+        $statement->execute(array($_POST['email']));
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($result as $k => $user) {}
 
         //Проверяем на валидность формата
         if(checkEmail($_POST['email'])){
@@ -66,7 +72,9 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
                         //Генерируем хеш
                         $hash = md5(generateCode(10));
                         //Добавляем в таблицу данного юзера хеш
-                        mysqli_query($link,"UPDATE `users` SET `user_hash`='".$hash."'  WHERE id='".$user['id']."'");
+                        $query = "UPDATE `users` SET `user_hash`= :user_hash WHERE id = :id";
+                        $statement = $pdo->prepare($query);
+                        $statement->execute(array(':user_hash' => $hash, ':id' => $user['id']));
                         //Записываем в куки
                         setcookie("id", $user['id'], time()+60*60*24*30);
                         setcookie("hash", $hash, time()+60*60*24*30);
