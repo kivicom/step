@@ -2,11 +2,10 @@
 require_once 'db.php';
 session_start();
 
-$table = 'comments'; //задаем имя таблицы в переменной
-$result = mysqli_query($link, "SELECT*FROM ".$table." WHERE id > 0 ORDER BY id DESC")or die( mysqli_error($link) );
-
-//Проверяем что же нам отдала база данных, если null – то какие-то проблемы:
-for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
+$sql = "SELECT*FROM `comments` AS c LEFT JOIN `users` AS u ON  c.user_id = u.id";
+$statement = $pdo->prepare($sql);
+$statement->execute();
+$comments = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -44,12 +43,16 @@ for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
+                    <?php if(!empty($_SESSION['user'])): ?>
+                        <li class="nav-item"><a class="nav-link" href="logout.php">Выход</a></li>
+                    <?php else: ?>
                     <li class="nav-item">
                         <a class="nav-link" href="login.php">Login</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="register.php">Register</a>
                     </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -107,10 +110,15 @@ for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
                         <div class="card-header"><h3>Оставить комментарий</h3></div>
 
                         <div class="card-body">
+                            <?php if(isset($_SESSION['user'])):?>
                             <form action="/store.php" method="post">
                                 <div class="form-group">
-                                    <label for="exampleFormControlTextarea1">Имя</label>
-                                    <input name="name" class="form-control" id="exampleFormControlTextarea1" />
+                                    <?php if(!isset($_SESSION['user'])):?>
+                                        <label for="exampleFormControlTextarea1">Имя</label>
+                                        <input name="name" class="form-control" id="exampleFormControlTextarea1" />
+                                    <?php else:?>
+                                        <input name="name" type="hidden" class="form-control" id="exampleFormControlTextarea1" value="<?php echo $_SESSION['user']['name'];?>"/>
+                                    <?php endif;?>
                                     <?php if(isset($_SESSION['name_err'])):?>
                                         <span class="text-danger">Ошибка. Поле имя не заполненно</span>
                                     <?php unset($_SESSION['name_err']);?>
@@ -126,6 +134,9 @@ for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
                                 </div>
                                 <button type="submit" class="btn btn-success">Отправить</button>
                             </form>
+                            <?php else:?>
+                                <span>Чтобы оcтавить комментарий, необходимо <a href="login.php">авторизоваться</a></span>
+                            <?php endif;?>
                         </div>
                     </div>
                 </div>
