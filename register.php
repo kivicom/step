@@ -32,8 +32,12 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
 
     require_once 'db.php';
 
-    $query = mysqli_query($link, "SELECT `email` FROM `users` WHERE `email` = '{$_POST['email']}'")or die( mysqli_error($link) );
-    for ($is_email = ''; $row = mysqli_fetch_assoc($query); $is_email = $row);
+    //$query = mysqli_query($link, "SELECT `email` FROM `users` WHERE `email` = '{$_POST['email']}'")or die( mysqli_error($link) );
+    $query = "SELECT `email` FROM `users` WHERE `email` = :email";
+    $statement = $pdo->prepare($query);
+    $statement->execute(array(':email' => $_POST['email']));
+    $is_email = $statement->fetch(PDO::FETCH_ASSOC);
+
     if(isEmail($_POST['email'], $is_email)){
         $_SESSION['email_err'] = 'Пользователь с таким E-mail уже существует';
         echo header('Location: http://marlinstep.loc/register.php');
@@ -61,8 +65,7 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
     $pass = md5($_POST['password']);
     $password_confirmation = md5($_POST['password_confirmation']);
 
-    $query = "INSERT INTO `users` (`name`, `email`, `password`) VALUE ('{$name}', '{$email}', '{$pass}')";
-    $query = mysqli_query($link, $query);
+    $query = "INSERT INTO `users` (`name`, `email`, `password`) VALUE (?, ?, ?)";
 
     if($query){
         $_SESSION['register_success'] = 'Вы успешно зарегистрировались. Теперь можете авторизоваться.';
