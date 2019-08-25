@@ -2,7 +2,7 @@
 require_once 'db.php';
 session_start();
 
-$sql = "SELECT*FROM `comments` AS c LEFT JOIN `users` AS u ON  c.user_id = u.id";
+$sql = "SELECT*FROM `comments` AS c LEFT JOIN `users` AS u ON  c.user_id = u.id ORDER BY u.id DESC";
 $statement = $pdo->prepare($sql);
 $statement->execute();
 $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
