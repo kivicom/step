@@ -6,6 +6,7 @@ if(!isset($_SESSION['user']['id'])){
     exit();
 }
 
+print_r($_SESSION);
 require_once 'db.php';
 
 //получаем из базы запись пользователя
@@ -28,7 +29,6 @@ function isEmail($email, $is_email){
     }
     return false;
 }
-
 
 //проверяем обязательные поля на пустоту
 if(!empty($_POST['name']) && !empty($_POST['email'])){
@@ -61,18 +61,30 @@ if(!empty($_POST['name']) && !empty($_POST['email'])){
             if(!file_exists($userDir)){
                 @mkdir($uploaddir . $userDir . '/');
             }
-            move_uploaded_file($_FILES['image']['tmp_name'], $uploaddir . $userDir . '/' . $_FILES['image']['name']);
+            $file = explode(".", $_FILES['image']['name']);
+            $filename = md5($file[0]) . '.' . $file[1];
+            $isFile = array_diff(scandir($uploaddir . $userDir, 1), ['.','..']);
+
+            if(!empty($isFile)){
+                if(file_exists($uploaddir . $userDir . '/' . $isFile[0])){
+                    unlink($uploaddir . $userDir . '/' . $isFile[0]);
+                    unset($_SESSION['user']['avatar']);
+                }
+            }
+
+            if(move_uploaded_file($_FILES['image']['tmp_name'], $uploaddir . $userDir . '/' . $filename)){
+                $_SESSION['user']['avatar'] = $filename;
+            }
         }
 
         $query = "UPDATE `users` SET `name`= :name, `email` = :email, `avatar` = :avatar WHERE id = :id";
         $statement = $pdo->prepare($query);
-        $result = $statement->execute(array(':name' => $_POST['name'], ':email' => $_POST['email'], ':avatar' => $_FILES['image']['name'], ':id' => $_SESSION['user']['id']));
+        $result = $statement->execute(array(':name' => $_POST['name'], ':email' => $_POST['email'], ':avatar' => $filename, ':id' => $_SESSION['user']['id']));
 
         if($result){
             $_SESSION['success'] = 'Профиль успешно обновлен';
             $_SESSION['user']['name'] = $_POST['name'];
             $_SESSION['user']['email'] = $_POST['email'];
-            $_SESSION['user']['avatar'] = $_FILES['image']['name'];
         }
         echo header('Location:/profile.php');
         exit();
