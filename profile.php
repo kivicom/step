@@ -6,7 +6,6 @@ if(!isset($_SESSION['user']['id'])){
     exit();
 }
 
-print_r($_SESSION);
 require_once 'db.php';
 
 //получаем из базы запись пользователя
@@ -31,8 +30,12 @@ function isEmail($email, $is_email){
 }
 
 //проверяем обязательные поля на пустоту
-if(!empty($_POST['name']) && !empty($_POST['email'])){
-
+if(isset($_POST['name']) || isset($_POST['email'])){
+    if(empty($_POST['name']) || empty($_POST['email'])){
+        $_SESSION['field_err'] = 'Заполните необходимые поля';
+        echo header('Location: /profile.php');
+        exit();
+    }
     //Проверяем, отличается ли новый емейл от того, что хранится в базе
     if($_POST['email'] !== $user['email']){
 
@@ -55,7 +58,8 @@ if(!empty($_POST['name']) && !empty($_POST['email'])){
             exit();
         }
 
-        if(!empty($_FILES['image'])){
+        $filename = '';
+        if(!empty($_FILES['image']['name'])){
             $uploaddir = __DIR__ . '/profile/';
             $userDir = 'user'.$_SESSION['user']['id'];
             if(!file_exists($userDir)){
@@ -67,7 +71,7 @@ if(!empty($_POST['name']) && !empty($_POST['email'])){
 
             if(!empty($isFile)){
                 if(file_exists($uploaddir . $userDir . '/' . $isFile[0])){
-                    unlink($uploaddir . $userDir . '/' . $isFile[0]);
+                    unlink($uploaddir . $userDir . '/' . $filename);
                     unset($_SESSION['user']['avatar']);
                 }
             }
@@ -80,6 +84,8 @@ if(!empty($_POST['name']) && !empty($_POST['email'])){
         $query = "UPDATE `users` SET `name`= :name, `email` = :email, `avatar` = :avatar WHERE id = :id";
         $statement = $pdo->prepare($query);
         $result = $statement->execute(array(':name' => $_POST['name'], ':email' => $_POST['email'], ':avatar' => $filename, ':id' => $_SESSION['user']['id']));
+
+
 
         if($result){
             $_SESSION['success'] = 'Профиль успешно обновлен';
@@ -161,6 +167,13 @@ if(!empty($_POST['name']) && !empty($_POST['email'])){
                                     <?php echo $_SESSION['success']; unset($_SESSION['success']);?>
                                 </div>
                             <?php endif;?>
+
+                            <?php if(isset($_SESSION['field_err'])):?>
+                                <div class="alert alert-danger" role="alert">
+                                    <?php echo $_SESSION['field_err']; unset($_SESSION['field_err']);?>
+                                </div>
+                            <?php endif;?>
+
                             <form action="" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-md-8">
@@ -207,21 +220,40 @@ if(!empty($_POST['name']) && !empty($_POST['email'])){
                         <div class="card-header"><h3>Безопасность</h3></div>
 
                         <div class="card-body">
+                            <?php if(isset($_SESSION['pass_success'])):?>
                             <div class="alert alert-success" role="alert">
-                                Пароль успешно обновлен
+                                <?php echo $_SESSION['pass_success']; unset($_SESSION['pass_success']);?>
                             </div>
+                            <?php endif;?>
 
-                            <form action="/profile/password" method="post">
+                            <?php if(isset($_SESSION['empty_err'])):?>
+                                <div class="alert alert-danger" role="alert">
+                                    <?php echo $_SESSION['empty_err']; unset($_SESSION['empty_err']);?>
+                                </div>
+                            <?php endif;?>
+
+                            <form action="upd_password.php" method="post">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">Current password</label>
                                             <input type="password" name="current" class="form-control" id="exampleFormControlInput1">
+
+                                            <?php if(isset($_SESSION['newpass_err'])):?>
+                                                <span class="text text-danger">
+                                                    <?php echo $_SESSION['newpass_err']; unset($_SESSION['newpass_err']);?>
+                                                </span>
+                                            <?php endif;?>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">New password</label>
                                             <input type="password" name="password" class="form-control" id="exampleFormControlInput1">
+                                            <?php if(isset($_SESSION['pass_err'])):?>
+                                                <span class="text text-danger">
+                                                    <?php echo $_SESSION['pass_err']; unset($_SESSION['pass_err']);?>
+                                                </span>
+                                            <?php endif;?>
                                         </div>
 
                                         <div class="form-group">
