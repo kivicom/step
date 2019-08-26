@@ -1,7 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Corporation
- * Date: 26.08.2019
- * Time: 18:11
- */
+require_once 'db.php';
+
+if($_GET['id']){
+    $query = "UPDATE `comments` SET `published`= 0 WHERE `id` = ?";
+    $statement = $pdo->prepare($query);
+    $statement->execute(array($_GET['id']));
+}
+echo header('Location:/admin.php');
+exit();
