@@ -2,7 +2,7 @@
 session_start();
 require_once 'db.php';
 
-$sql = "SELECT*FROM `comments` ORDER BY id DESC";
+$sql = "SELECT*FROM `users` AS u LEFT JOIN `comments` AS c ON  c.user_id = u.id ORDER BY u.id DESC";
 $statement = $pdo->prepare($sql);
 $statement->execute();
 $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -81,7 +81,6 @@ $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
                                 <tbody>
                                 <?php if($comments):?>
                                 <?php foreach ($comments as $comment) :?>
-                                        <?php print_r($comment);?>
                                 <tr>
                                     <td>
                                         <?php if(empty($comment['avatar'])):?>
