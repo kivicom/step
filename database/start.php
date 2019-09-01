@@ -1,7 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Corporation
- * Date: 01.09.2019
- * Time: 8:50
- */
+$config = include 'config.php';
+require_once 'database/Connection.php';
+require_once 'database/QueryBuilder.php';
+return new QueryBuilder(Connection::make($config['database']));
