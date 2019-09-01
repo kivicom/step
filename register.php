@@ -40,7 +40,7 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
 
     if(isEmail($_POST['email'], $is_email)){
         $_SESSION['email_err'] = 'Пользователь с таким E-mail уже существует';
-        echo header('Location: http://marlinstep.loc/register.php');
+        echo header('Location: /register.php');
         exit();
     }
 
@@ -48,7 +48,7 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
     //print_r($emails);die();
     if(!checkEmail($_POST['email'])){
         $_SESSION['email_err'] = 'Неправильный формат E-mail';
-        echo header('Location: http://marlinstep.loc/register.php');
+        echo header('Location: /register.php');
         exit();
     }
 
@@ -56,7 +56,7 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
 
     if(!checkPassword($_POST['password'], $_POST['password_confirmation'])){
         $_SESSION['pass_err'] = 'Пароли не совпадают или пароль содержит менее 6 символов';
-        echo header('Location: http://marlinstep.loc/register.php');
+        echo header('Location: /register.php');
         exit();
     }
 
