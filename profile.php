@@ -5,14 +5,9 @@ if(!isset($_SESSION['user']['id'])){
     echo header('Location: /login.php');
     exit();
 }
-
-require_once 'db.php';
-
-//получаем из базы запись пользователя
-$sql = "SELECT * FROM `users` WHERE id = ? LIMIT 1";
-$statement = $pdo->prepare($sql);
-$statement->execute(array($_SESSION['user']['id']));
-$user = $statement->fetch(PDO::FETCH_ASSOC);
+require_once 'functions.php';
+$pdo = include 'database/start.php';
+$user = $pdo->getUserId($_SESSION['user']['id']);
 
 function checkEmail($email)
 {
@@ -37,7 +32,7 @@ if(isset($_POST['name']) || isset($_POST['email'])){
         exit();
     }
     //Проверяем, отличается ли новый емейл от того, что хранится в базе
-    if($_POST['email'] !== $user['email']){
+    if($_POST['email'] !== $_SESSION['user']['email']){
 
         //Если был введён новый емейл - проверяем, соответствует ли он определённому формату
         if(!checkEmail($_POST['email'])){
@@ -46,10 +41,7 @@ if(isset($_POST['name']) || isset($_POST['email'])){
             exit();
         }
 
-        $query = "SELECT `email` FROM `users` WHERE `email` = :email";
-        $statement = $pdo->prepare($query);
-        $statement->execute(array(':email' => $_POST['email']));
-        $is_email = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $is_email = $pdo->getEmail($_POST['email']);
 
         //Проверяем так же, занят ли он кем-либо
         if(isEmail($_POST['email'], $is_email)){
@@ -69,23 +61,18 @@ if(isset($_POST['name']) || isset($_POST['email'])){
             $filename = md5($file[0]) . '.' . $file[1];
             $isFile = array_diff(scandir($uploaddir . $userDir, 1), ['.','..']);
 
-            if(!empty($isFile)){
                 if(file_exists($uploaddir . $userDir . '/' . $isFile[0])){
-                    unlink($uploaddir . $userDir . '/' . $filename);
+                    unlink($uploaddir . $userDir . '/' . $isFile[0]);
                     unset($_SESSION['user']['avatar']);
                 }
-            }
+
 
             if(move_uploaded_file($_FILES['image']['tmp_name'], $uploaddir . $userDir . '/' . $filename)){
                 $_SESSION['user']['avatar'] = $filename;
             }
         }
 
-        $query = "UPDATE `users` SET `name`= :name, `email` = :email, `avatar` = :avatar WHERE id = :id";
-        $statement = $pdo->prepare($query);
-        $result = $statement->execute(array(':name' => $_POST['name'], ':email' => $_POST['email'], ':avatar' => $filename, ':id' => $_SESSION['user']['id']));
-
-
+        $result = $pdo->userUpdate($_SESSION['user']['id'], $_POST, $filename);
 
         if($result){
             $_SESSION['success'] = 'Профиль успешно обновлен';
@@ -199,8 +186,8 @@ if(isset($_POST['name']) || isset($_POST['email'])){
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <?php if(!empty($_SESSION['user']['avatar'])):?>
-                                            <img src="profile/user<?php echo $_SESSION['user']['id'];?>/<?php echo $_SESSION['user']['avatar'];?>" alt="" class="img-fluid">
+                                        <?php if(!empty($user['avatar'])):?>
+                                            <img src="profile/user<?php echo $_SESSION['user']['id'];?>/<?php echo $user['avatar'];?>" alt="" class="img-fluid">
                                         <?php else:?>
                                             <img src="img/no-user.jpg" alt="" class="img-fluid">
                                         <?php endif;?>
