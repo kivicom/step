@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once 'db.php';
+$db = include 'database/start.php';
 
 function checkPassword($pass, $pass_confirm)
 {
@@ -23,10 +23,7 @@ if(empty($_POST['current']) || empty($_POST['password']) || empty($_POST['passwo
     $new_password = isset($_POST['password']) ? $_POST['password'] : '';
     $password_confirmation = isset($_POST['password_confirmation']) ? $_POST['password_confirmation'] : '';
 
-    $query = "SELECT `password` FROM `users` WHERE `id` = ?";
-    $statement = $pdo->prepare($query);
-    $statement->execute(array($_SESSION['user']['id']));
-    $currentDB = $statement->fetch(PDO::FETCH_ASSOC);
+    $currentDB = $db->getUserId($_SESSION['user']['id']);
 
     if(md5($current) !== $currentDB['password']){
         $_SESSION['newpass_err'] = 'Текущий пароль не верный';
@@ -40,9 +37,8 @@ if(empty($_POST['current']) || empty($_POST['password']) || empty($_POST['passwo
         exit();
     }
 
-    $query = "UPDATE `users` SET `password` = ? WHERE `id` = ?";
-    $statement = $pdo->prepare($query);
-    $statement->execute(array(md5($_POST['password']), $_SESSION['user']['id']));
+
+    $db->updPassword($_SESSION['user']['id'], $new_password);
 
     $_SESSION['pass_success'] = 'Пароль успешно обновлен';
     echo header('Location: /profile.php');
