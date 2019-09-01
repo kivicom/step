@@ -1,7 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Corporation
- * Date: 01.09.2019
- * Time: 7:27
- */
+
+return [
+    "database" => [
+        "database" => "marlinstep",
+        "username" => "root",
+        "password" => "",
+        "connection" => "mysql:host=127.0.0.1",
+        "charset" => "utf8",
+    ]
+];
