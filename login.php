@@ -46,8 +46,7 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
     if( !empty( $_POST['email'] ) && !empty( $_POST['password'] ) ) {
         //Делаем выборку из базы данных пользователя по переданному $_POST['email']
 
-        $result = $pdo->getEmail($_POST['email']);
-        foreach ($result as $k => $user) {}
+        $user = $pdo->getEmail($_POST['email']);
 
         //Проверяем на валидность формата
         if(checkEmail($_POST['email'])){
