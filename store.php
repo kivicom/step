@@ -1,17 +1,15 @@
 <?php
 session_start();
 
+$db = include 'database/start.php';
+
 if(!empty($_POST['name']) && !empty($_POST['text'])){
-    require_once 'db.php';
 
     $user_id = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : '0';
     $name = $_POST['name'];
     $text = $_POST['text'];
 
-    $query = "INSERT INTO `comments` (`user_id`, `name`, `text`) VALUES (?, ?, ?)";
-    $statement = $pdo->prepare($query);
-    $query = $statement->execute(array($user_id, $name, $text));
-    //print_r($query);die();
+    $query = $db->liveComments($user_id, $name, $text);
 
     if($query){
         $_SESSION['com_ok'] = 'Комментарий успешно добавлен';
