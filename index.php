@@ -1,11 +1,9 @@
 <?php
-require_once 'db.php';
 session_start();
 
-$sql = "SELECT*FROM `comments` AS c LEFT JOIN `users` AS u ON  c.user_id = u.id ORDER BY u.id DESC";
-$statement = $pdo->prepare($sql);
-$statement->execute();
-$comments = $statement->fetchAll(PDO::FETCH_ASSOC);
+require_once 'functions.php';
+$db = include 'database/start.php';
+$comments = $db->getAllComments('comments');
 
 ?>
 <!DOCTYPE html>
@@ -27,7 +25,7 @@ $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
 <div id="app">
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
+            <a class="navbar-brand" href="index.php">
                 Project
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +43,7 @@ $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
                     <!-- Authentication Links -->
                     <?php if(!empty($_SESSION['user'])): ?>
                         <li class="nav-item"><a class="nav-link" href="logout.php">Выход</a></li>
+                        <li class="nav-item"><a class="nav-link" href="profile.php">Профиль</a></li>
                     <?php else: ?>
                     <li class="nav-item">
                         <a class="nav-link" href="login.php">Login</a>
@@ -86,6 +85,7 @@ $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
                             <!--12/10/2025-->
 
                             <?php foreach ($comments as $comment) :?>
+                            <?php if($comment['published']):?>
                             <div class="media">
                                 <img src="img/no-user.jpg" class="mr-3" alt="..." width="64" height="64">
                                 <div class="media-body">
@@ -100,6 +100,7 @@ $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
                                     </p>
                                 </div>
                             </div>
+                            <?php endif;?>
                             <?php endforeach;?>
                         </div>
                     </div>
