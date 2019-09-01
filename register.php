@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+require_once 'functions.php';
 
 
 function checkEmail($email)
@@ -30,13 +30,8 @@ function checkPassword($pass, $pass_confirm)
 
 if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['password_confirmation'])){
 
-    require_once 'db.php';
-
-    //$query = mysqli_query($link, "SELECT `email` FROM `users` WHERE `email` = '{$_POST['email']}'")or die( mysqli_error($link) );
-    $query = "SELECT `email` FROM `users` WHERE `email` = :email";
-    $statement = $pdo->prepare($query);
-    $statement->execute(array(':email' => $_POST['email']));
-    $is_email = $statement->fetch(PDO::FETCH_ASSOC);
+    $db = include 'database/start.php';
+    $is_email = $db->getEmail($_POST['email']);
 
     if(isEmail($_POST['email'], $is_email)){
         $_SESSION['email_err'] = 'Пользователь с таким E-mail уже существует';
@@ -65,7 +60,7 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
     $pass = md5($_POST['password']);
     $password_confirmation = md5($_POST['password_confirmation']);
 
-    $query = "INSERT INTO `users` (`name`, `email`, `password`) VALUE (?, ?, ?)";
+    $query = $db->Register($name, $email,$pass);
 
     if($query){
         $_SESSION['register_success'] = 'Вы успешно зарегистрировались. Теперь можете авторизоваться.';
