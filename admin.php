@@ -1,11 +1,9 @@
 <?php
 session_start();
-require_once 'db.php';
+require_once 'functions.php';
+$pdo = include 'database/start.php';
 
-$sql = "SELECT*FROM `users` AS u LEFT JOIN `comments` AS c ON  c.user_id = u.id ORDER BY u.id DESC";
-$statement = $pdo->prepare($sql);
-$statement->execute();
-$comments = $statement->fetchAll(PDO::FETCH_ASSOC);
+$comments = $pdo->getAll('comments');
 
 ?>
 <!DOCTYPE html>

@@ -9,9 +9,9 @@ class QueryBuilder
         $this->pdo = $pdo;
     }
 
-    public function getAllComments($table)
+    public function getAll($table)
     {
-        $sql = "SELECT*FROM `{$table}` LEFT JOIN `users` ON  {$table}.user_id = users.id ORDER BY users.id DESC";
+        $sql = "SELECT*FROM `users` LEFT JOIN `{$table}` ON  users.id = {$table}.user_id ORDER BY {$table}.id DESC";
         $statement = $this->pdo->prepare($sql);
         $statement->execute();
         $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -76,6 +76,13 @@ class QueryBuilder
         $statement = $this->pdo->prepare($query);
         $result = $statement->execute(array($user_id, $name, $text));
         return $result;
+    }
+
+    public function manageComments($id, $published)
+    {
+        $query = "UPDATE `comments` SET `published`= ? WHERE `id` = ?";
+        $statement = $this->pdo->prepare($query);
+        $statement->execute([$published, $id]);
     }
 
     public function updPassword($id, $password)

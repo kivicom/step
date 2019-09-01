@@ -3,7 +3,7 @@ session_start();
 
 require_once 'functions.php';
 $db = include 'database/start.php';
-$comments = $db->getAllComments('comments');
+$comments = $db->getAll('comments');
 
 ?>
 <!DOCTYPE html>
