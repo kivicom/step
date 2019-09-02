@@ -1,10 +1,11 @@
 <?php
-require_once 'db.php';
+
+require_once 'database/start.php';
+require_once 'functions.php';
+$db = new Admin(Connection::make($config['database']));
 
 if($_GET['id']){
-    $query = "DELETE FROM `comments` WHERE `id` = ?";
-    $statement = $pdo->prepare($query);
-    $statement->execute(array($_GET['id']));
+    $db->deleteComments($_GET['id']);
 }
 echo header('Location:/admin.php');
 exit();

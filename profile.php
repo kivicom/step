@@ -1,13 +1,14 @@
 <?php
 session_start();
+require_once 'database/start.php';
+require_once 'functions.php';
 
 if(!isset($_SESSION['user']['id'])){
     echo header('Location: /login.php');
     exit();
 }
-require_once 'functions.php';
-$pdo = include 'database/start.php';
-$user = $pdo->getUserId($_SESSION['user']['id']);
+$db = new User(Connection::make($config['database']));
+$user = $db->getUserId($_SESSION['user']['id']);
 
 function checkEmail($email)
 {
@@ -41,7 +42,7 @@ if(isset($_POST['name']) || isset($_POST['email'])){
             exit();
         }
 
-        $is_email = $pdo->getEmail($_POST['email']);
+        $is_email = $db->getEmail($_POST['email']);
 
         //Проверяем так же, занят ли он кем-либо
         if(isEmail($_POST['email'], $is_email)){
@@ -72,7 +73,7 @@ if(isset($_POST['name']) || isset($_POST['email'])){
             }
         }
 
-        $result = $pdo->userUpdate($_SESSION['user']['id'], $_POST, $filename);
+        $result = $db->userUpdate($_SESSION['user']['id'], $_POST, $filename);
 
         if($result){
             $_SESSION['success'] = 'Профиль успешно обновлен';

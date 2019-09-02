@@ -1,9 +1,11 @@
 <?php
 session_start();
-require_once 'functions.php';
-$pdo = include 'database/start.php';
 
-$comments = $pdo->getAll('comments');
+require_once 'database/start.php';
+require_once 'functions.php';
+$db = new Admin(Connection::make($config['database']));
+
+$comments = $db->getAll();
 
 ?>
 <!DOCTYPE html>
@@ -92,11 +94,11 @@ $comments = $pdo->getAll('comments');
                                     <td><?php echo $comment['text'];?></td>
                                     <td>
                                         <?php if($comment['published'] == 0):?>
-                                            <a href="allow.php?id=<?php echo $comment['id'];?>" class="btn btn-success" >Разрешить</a>
+                                            <a href="allow.php?id=<?php echo $comment['cid'];?>" class="btn btn-success" >Разрешить</a>
                                         <?php else:?>
-                                            <a href="disallow.php?id=<?php echo $comment['id'];?>" class="btn btn-warning">Запретить</a>
+                                            <a href="disallow.php?id=<?php echo $comment['cid'];?>" class="btn btn-warning">Запретить</a>
                                         <?php endif;?>
-                                        <a href="delete.php?id=<?php echo $comment['id'];?>" onclick="return confirm('are you sure?')" class="btn btn-danger">Удалить</a>
+                                        <a href="delete.php?id=<?php echo $comment['cid'];?>" onclick="return confirm('are you sure?')" class="btn btn-danger">Удалить</a>
                                     </td>
                                 </tr>
                                 <?php endforeach;?>

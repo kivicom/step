@@ -1,7 +1,8 @@
 <?php
 session_start();
+require_once 'database/start.php';
 require_once 'functions.php';
-$pdo = include 'database/start.php';
+$db = new User(Connection::make($config['database']));
 
 
 function checkEmail($email)
@@ -26,7 +27,7 @@ function generateCode($length=6) {
 //Проверяем куки на существование
 if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
     //Если куки существуют достаем из базы данные пользователя где ID = $_COOKIE['id']
-    $user = $pdo->getUserId($_COOKIE['id']);
+    $user = $db->getUserId($_COOKIE['id']);
 
     //Сравниваем данные из кукисов м данными из БД
     if(($user['user_hash'] === $_COOKIE['hash']) && ($user['id'] === $_COOKIE['id'])){
@@ -46,7 +47,7 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
     if( !empty( $_POST['email'] ) && !empty( $_POST['password'] ) ) {
         //Делаем выборку из базы данных пользователя по переданному $_POST['email']
 
-        $user = $pdo->getEmail($_POST['email']);
+        $user = $db->getEmail($_POST['email']);
 
         //Проверяем на валидность формата
         if(checkEmail($_POST['email'])){
@@ -66,7 +67,7 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
                     if($_POST['remember']){
                         //Генерируем хеш
                         $hash = md5(generateCode(10));
-                        $pdo->getRememberMe($hash, $user['id']);
+                        $db->getRememberMe($hash, $user['id']);
                         //Записываем в куки
                         setcookie("id", $user['id'], time()+60*60*24*30);
                         setcookie("hash", $hash, time()+60*60*24*30);

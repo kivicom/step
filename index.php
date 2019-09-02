@@ -2,8 +2,11 @@
 session_start();
 
 require_once 'functions.php';
-$db = include 'database/start.php';
+require_once 'database/start.php';
+
+$db = new Comment(Connection::make($config['database']));
 $comments = $db->getAll('comments');
+
 
 ?>
 <!DOCTYPE html>
@@ -87,7 +90,11 @@ $comments = $db->getAll('comments');
                             <?php foreach ($comments as $comment) :?>
                             <?php if($comment['published']):?>
                             <div class="media">
-                                <img src="img/no-user.jpg" class="mr-3" alt="..." width="64" height="64">
+                                <?php if(empty($comment['avatar'])):?>
+                                    <img src="img/no-user.jpg" class="mr-3" alt="..." width="64" height="64">
+                                <?php else:?>
+                                    <img src="profile/user<?php echo $comment['user_id'];?>/<?php echo $comment['avatar'];?>" alt="" class="mr-3"  width="64" height="64">
+                                <?php endif;?>
                                 <div class="media-body">
                                     <h5 class="mt-0"><?php echo $comment['name'];?></h5> <!--Выводим имя коментатора-->
                                     <span>

@@ -1,7 +1,9 @@
 <?php
 session_start();
 
-$db = include 'database/start.php';
+require_once 'database/start.php';
+require_once 'functions.php';
+$db = new User(Connection::make($config['database']));
 
 function checkPassword($pass, $pass_confirm)
 {

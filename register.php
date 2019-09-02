@@ -1,6 +1,8 @@
 <?php
 session_start();
+require_once 'database/start.php';
 require_once 'functions.php';
+$db = new User(Connection::make($config['database']));
 
 
 function checkEmail($email)
@@ -30,7 +32,6 @@ function checkPassword($pass, $pass_confirm)
 
 if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['password_confirmation'])){
 
-    $db = include 'database/start.php';
     $is_email = $db->getEmail($_POST['email']);
 
     if(isEmail($_POST['email'], $is_email)){

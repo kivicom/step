@@ -1,7 +1,7 @@
 <?php
 session_start();
-
-$db = include 'database/start.php';
+require_once 'database/start.php';
+$db = new Comment(Connection::make($config['database']));
 
 if(!empty($_POST['name']) && !empty($_POST['text'])){
 

@@ -1,6 +1,6 @@
 <?php
 
-class QueryBuilder
+class User
 {
     protected $pdo;
 
@@ -9,13 +9,11 @@ class QueryBuilder
         $this->pdo = $pdo;
     }
 
-    public function getAll($table)
-    {
-        $sql = "SELECT*FROM `users` LEFT JOIN `{$table}` ON  users.id = {$table}.user_id ORDER BY {$table}.id DESC";
-        $statement = $this->pdo->prepare($sql);
-        $statement->execute();
-        $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
-        return $comments;
+    public function Register($name, $email,$password){
+        $query = "INSERT INTO `users` (`name`, `email`, `password`) VALUE (?, ?, ?)";
+        $statement = $this->pdo->prepare($query);
+        $result = $statement->execute(array($name, $email, $password));
+        return $result;
     }
 
     public function getUserId($id)
@@ -61,28 +59,6 @@ class QueryBuilder
         $statement = $this->pdo->prepare($query);
         $result = $statement->execute($data);
         return $result;
-    }
-
-    public function Register($name, $email,$password){
-        $query = "INSERT INTO `users` (`name`, `email`, `password`) VALUE (?, ?, ?)";
-        $statement = $this->pdo->prepare($query);
-        $result = $statement->execute(array($name, $email, $password));
-        return $result;
-    }
-
-    public function liveComments($user_id, $name, $text)
-    {
-        $query = "INSERT INTO `comments` (`user_id`, `name`, `text`) VALUES (?, ?, ?)";
-        $statement = $this->pdo->prepare($query);
-        $result = $statement->execute(array($user_id, $name, $text));
-        return $result;
-    }
-
-    public function manageComments($id, $published)
-    {
-        $query = "UPDATE `comments` SET `published`= ? WHERE `id` = ?";
-        $statement = $this->pdo->prepare($query);
-        $statement->execute([$published, $id]);
     }
 
     public function updPassword($id, $password)
