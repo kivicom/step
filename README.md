@@ -13,3 +13,6 @@
 require_once 'database/start.php'; // Подключение компонентов
 $db = new Comment(Connection::make($config['database'])); // Соединение с БД
 $comments = $db->getAll('comments'); // Вызов метода 
+
+
+Все файлы, которых коснулись изменения по данному модулю 1, помечены коммитом - "Query Builder"
