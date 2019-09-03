@@ -1,12 +1,7 @@
 <?php
-session_start();
-
-require_once 'functions.php';
-require_once 'database/start.php';
 
 $db = new Comment(Connection::make($config['database']));
 $comments = $db->getAll('comments');
-
 
 ?>
 <!DOCTYPE html>
@@ -28,7 +23,7 @@ $comments = $db->getAll('comments');
 <div id="app">
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="/">
                 Project
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,14 +40,14 @@ $comments = $db->getAll('comments');
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
                     <?php if(!empty($_SESSION['user'])): ?>
-                        <li class="nav-item"><a class="nav-link" href="logout.php">Выход</a></li>
-                        <li class="nav-item"><a class="nav-link" href="profile.php">Профиль</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../logout">Выход</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../profile">Профиль</a></li>
                     <?php else: ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="login.php">Login</a>
+                        <a class="nav-link" href="../login">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="register.php">Register</a>
+                        <a class="nav-link" href="../register">Register</a>
                     </li>
                     <?php endif; ?>
                 </ul>
@@ -93,7 +88,7 @@ $comments = $db->getAll('comments');
                                 <?php if(empty($comment['avatar'])):?>
                                     <img src="img/no-user.jpg" class="mr-3" alt="..." width="64" height="64">
                                 <?php else:?>
-                                    <img src="profile/user<?php echo $comment['user_id'];?>/<?php echo $comment['avatar'];?>" alt="" class="mr-3"  width="64" height="64">
+                                    <img src="cabinet/user<?php echo $comment['user_id'];?>/<?php echo $comment['avatar'];?>" alt="" class="mr-3"  width="64" height="64">
                                 <?php endif;?>
                                 <div class="media-body">
                                     <h5 class="mt-0"><?php echo $comment['name'];?></h5> <!--Выводим имя коментатора-->
@@ -143,7 +138,7 @@ $comments = $db->getAll('comments');
                                 <button type="submit" class="btn btn-success">Отправить</button>
                             </form>
                             <?php else:?>
-                                <span>Чтобы оcтавить комментарий, необходимо <a href="login.php">авторизоваться</a></span>
+                                <span>Чтобы оcтавить комментарий, необходимо <a href="../login.php">авторизоваться</a></span>
                             <?php endif;?>
                         </div>
                     </div>

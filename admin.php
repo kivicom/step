@@ -1,10 +1,6 @@
 <?php
-session_start();
 
-require_once 'database/start.php';
-require_once 'functions.php';
 $db = new Admin(Connection::make($config['database']));
-
 $comments = $db->getAll();
 
 ?>
@@ -21,13 +17,13 @@ $comments = $db->getAll();
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="css/app.css" rel="stylesheet">
+    <link href="public/css/app.css" rel="stylesheet">
 </head>
 <body>
 <div id="app">
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="/">
                 Project
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,14 +40,14 @@ $comments = $db->getAll();
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
                     <?php if(!empty($_SESSION['user'])): ?>
-                        <li class="nav-item"><a class="nav-link" href="logout.php">Выход</a></li>
-                        <li class="nav-item"><a class="nav-link" href="profile.php">Профиль</a></li>
+                        <li class="nav-item"><a class="nav-link" href="logout">Выход</a></li>
+                        <li class="nav-item"><a class="nav-link" href="profile">Профиль</a></li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="login.php">Login</a>
+                            <a class="nav-link" href="login">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="register.php">Register</a>
+                            <a class="nav-link" href="register">Register</a>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -84,7 +80,7 @@ $comments = $db->getAll();
                                 <tr>
                                     <td>
                                         <?php if(empty($comment['avatar'])):?>
-                                            <img src="img/no-user.jpg" alt="" class="img-fluid" width="64" height="64">
+                                            <img src="public/img/no-user.jpg" alt="" class="img-fluid" width="64" height="64">
                                         <?php else:?>
                                             <img src="profile/user<?php echo $comment['user_id'];?>/<?php echo $comment['avatar'];?>" alt="" class="img-fluid"  width="64" height="64">
                                         <?php endif;?>

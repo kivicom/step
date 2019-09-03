@@ -1,7 +1,5 @@
 <?php
-session_start();
-require_once 'database/start.php';
-require_once 'functions.php';
+
 $db = new User(Connection::make($config['database']));
 
 
@@ -36,7 +34,7 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
 
     if(isEmail($_POST['email'], $is_email)){
         $_SESSION['email_err'] = 'Пользователь с таким E-mail уже существует';
-        echo header('Location: /register.php');
+        echo header('Location: /register');
         exit();
     }
 
@@ -44,7 +42,7 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
     //print_r($emails);die();
     if(!checkEmail($_POST['email'])){
         $_SESSION['email_err'] = 'Неправильный формат E-mail';
-        echo header('Location: /register.php');
+        echo header('Location: /register');
         exit();
     }
 
@@ -52,7 +50,7 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
 
     if(!checkPassword($_POST['password'], $_POST['password_confirmation'])){
         $_SESSION['pass_err'] = 'Пароли не совпадают или пароль содержит менее 6 символов';
-        echo header('Location: /register.php');
+        echo header('Location: /register');
         exit();
     }
 
@@ -65,11 +63,11 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
 
     if($query){
         $_SESSION['register_success'] = 'Вы успешно зарегистрировались. Теперь можете авторизоваться.';
-        echo header('Location: /login.php');
+        echo header('Location: /login');
         exit();
     }else{
         $_SESSION['register_error'] = 'Ошибка решистрации. Пожалуйста, повторите позже.';
-        echo header('Location : /register.php');
+        echo header('Location : /register');
         exit();
     }
 }
@@ -88,13 +86,13 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="css/app.css" rel="stylesheet">
+    <link href="public/css/app.css" rel="stylesheet">
 </head>
 <body>
 <div id="app">
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="/">
                 Project
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,12 +108,17 @@ if(!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password'
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="login.php">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="register.php">Register</a>
-                    </li>
+                    <?php if(!empty($_SESSION['user'])): ?>
+                        <li class="nav-item"><a class="nav-link" href="../logout">Выход</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../profile">Профиль</a></li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../register">Register</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>

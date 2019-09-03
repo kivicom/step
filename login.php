@@ -1,7 +1,6 @@
 <?php
-session_start();
-require_once 'database/start.php';
-require_once 'functions.php';
+//session_start();
+
 $db = new User(Connection::make($config['database']));
 
 
@@ -77,17 +76,17 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
                     exit();
                 }else{
                     $_SESSION['pass_err'] = 'Пароль не верный';
-                    echo header('Location: /login.php');
+                    echo header('Location: /login');
                     exit();
                 }
             }else{
                 $_SESSION['email_err'] = 'Email не найден';
-                echo header('Location: /login.php');
+                echo header('Location: /login');
                 exit();
             }
         }else{
             $_SESSION['email_err'] = 'Неправильный формат E-mail';
-            echo header('Location: /login.php');
+            echo header('Location: /login');
             exit();
         }
     }
@@ -107,13 +106,13 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="css/app.css" rel="stylesheet">
+    <link href="public/css/app.css" rel="stylesheet">
 </head>
 <body>
 <div id="app">
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="/">
                 Project
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -129,12 +128,17 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['hash'])){
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="login.php">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="register.php">Register</a>
-                    </li>
+                    <?php if(!empty($_SESSION['user'])): ?>
+                        <li class="nav-item"><a class="nav-link" href="../logout">Выход</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../profile">Профиль</a></li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../register">Register</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>

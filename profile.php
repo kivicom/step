@@ -1,10 +1,7 @@
 <?php
-session_start();
-require_once 'database/start.php';
-require_once 'functions.php';
 
 if(!isset($_SESSION['user']['id'])){
-    echo header('Location: /login.php');
+    echo header('Location: /login');
     exit();
 }
 $db = new User(Connection::make($config['database']));
@@ -29,7 +26,7 @@ function isEmail($email, $is_email){
 if(isset($_POST['name']) || isset($_POST['email'])){
     if(empty($_POST['name']) || empty($_POST['email'])){
         $_SESSION['field_err'] = 'Заполните необходимые поля';
-        echo header('Location: /profile.php');
+        echo header('Location: /profile');
         exit();
     }
     //Проверяем, отличается ли новый емейл от того, что хранится в базе
@@ -38,7 +35,7 @@ if(isset($_POST['name']) || isset($_POST['email'])){
         //Если был введён новый емейл - проверяем, соответствует ли он определённому формату
         if(!checkEmail($_POST['email'])){
             $_SESSION['email_err'] = 'Неправильный формат E-mail';
-            echo header('Location: /profile.php');
+            echo header('Location: /profile');
             exit();
         }
 
@@ -47,13 +44,13 @@ if(isset($_POST['name']) || isset($_POST['email'])){
         //Проверяем так же, занят ли он кем-либо
         if(isEmail($_POST['email'], $is_email)){
             $_SESSION['email_err'] = 'Пользователь с таким E-mail уже существует';
-            echo header('Location: /profile.php');
+            echo header('Location: /profile');
             exit();
         }
 
         $filename = '';
         if(!empty($_FILES['image']['name'])){
-            $uploaddir = __DIR__ . '/profile/';
+            $uploaddir = __DIR__ . '/cabinet/';
             $userDir = 'user'.$_SESSION['user']['id'];
             if(!file_exists($userDir)){
                 @mkdir($uploaddir . $userDir . '/');
@@ -80,11 +77,11 @@ if(isset($_POST['name']) || isset($_POST['email'])){
             $_SESSION['user']['name'] = $_POST['name'];
             $_SESSION['user']['email'] = $_POST['email'];
         }
-        echo header('Location:/profile.php');
+        echo header('Location:/profile');
         exit();
     }else{
         $_SESSION['email_err'] = 'Вы ввели прежний E-mail';
-        echo header('Location: /profile.php');
+        echo header('Location: /profile');
         exit();
     }
 
@@ -104,13 +101,13 @@ if(isset($_POST['name']) || isset($_POST['email'])){
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="css/app.css" rel="stylesheet">
+    <link href="public/css/app.css" rel="stylesheet">
 </head>
 <body>
 <div id="app">
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
+            <a class="navbar-brand" href="/">
                 Project
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -127,14 +124,14 @@ if(isset($_POST['name']) || isset($_POST['email'])){
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
                     <?php if(!empty($_SESSION['user'])): ?>
-                        <li class="nav-item"><a class="nav-link" href="logout.php">Выход</a></li>
-                        <li class="nav-item"><a class="nav-link" href="profile.php">Профиль</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../logout">Выход</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../profile">Профиль</a></li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="login.php">Login</a>
+                            <a class="nav-link" href="../login">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="register.php">Register</a>
+                            <a class="nav-link" href="../register">Register</a>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -188,9 +185,9 @@ if(isset($_POST['name']) || isset($_POST['email'])){
                                     </div>
                                     <div class="col-md-4">
                                         <?php if(!empty($user['avatar'])):?>
-                                            <img src="profile/user<?php echo $_SESSION['user']['id'];?>/<?php echo $user['avatar'];?>" alt="" class="img-fluid">
+                                            <img src="cabinet/user<?php echo $_SESSION['user']['id'];?>/<?php echo $user['avatar'];?>" alt="" class="img-fluid">
                                         <?php else:?>
-                                            <img src="img/no-user.jpg" alt="" class="img-fluid">
+                                            <img src="public/img/no-user.jpg" alt="" class="img-fluid">
                                         <?php endif;?>
                                     </div>
 
