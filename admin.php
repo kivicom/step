@@ -82,19 +82,29 @@ $comments = $db->getAll();
                                         <?php if(empty($comment['avatar'])):?>
                                             <img src="public/img/no-user.jpg" alt="" class="img-fluid" width="64" height="64">
                                         <?php else:?>
-                                            <img src="profile/user<?php echo $comment['user_id'];?>/<?php echo $comment['avatar'];?>" alt="" class="img-fluid"  width="64" height="64">
+                                            <img src="cabinet/user<?php echo $comment['user_id'];?>/<?php echo $comment['avatar'];?>" alt="" class="img-fluid"  width="64" height="64">
                                         <?php endif;?>
                                     </td>
                                     <td><?php echo $comment['name'];?></td>
                                     <td><?php echo date('d/m/Y', strtotime($comment['date']));?></td>
                                     <td><?php echo $comment['text'];?></td>
                                     <td>
+
                                         <?php if($comment['published'] == 0):?>
-                                            <a href="allow.php?id=<?php echo $comment['cid'];?>" class="btn btn-success" >Разрешить</a>
+                                            <form action="/allow" method="POST">
+                                                <button type="submit" class="btn btn-success" >Разрешить</button>
+                                                <input type="hidden" name="id" value="<?php echo $comment['cid'];?>">
+                                            </form>
                                         <?php else:?>
-                                            <a href="disallow.php?id=<?php echo $comment['cid'];?>" class="btn btn-warning">Запретить</a>
+                                            <form action="/disallow" method="POST">
+                                                <button type="submit" class="btn btn-warning" >Запретить</button>
+                                                <input type="hidden" name="id" value="<?php echo $comment['cid'];?>">
+                                            </form>
                                         <?php endif;?>
-                                        <a href="delete.php?id=<?php echo $comment['cid'];?>" onclick="return confirm('are you sure?')" class="btn btn-danger">Удалить</a>
+                                        <form action="/delete" method="POST">
+                                            <button type="submit" class="btn btn-danger" >Удалить</button>
+                                            <input type="hidden" name="id" value="<?php echo $comment['cid'];?>">
+                                        </form>
                                     </td>
                                 </tr>
                                 <?php endforeach;?>

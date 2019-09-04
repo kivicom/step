@@ -1,11 +1,9 @@
 <?php
 
-require_once 'database/start.php';
-require_once 'functions.php';
 $db = new Admin(Connection::make($config['database']));
 
-if($_GET['id']){
-    $db->deleteComments($_GET['id']);
+if($_POST['id']){
+    $db->deleteComments($_POST['id']);
 }
-echo header('Location:/admin.php');
+echo header('Location:/admin');
 exit();

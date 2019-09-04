@@ -50,7 +50,7 @@ if(isset($_POST['name']) || isset($_POST['email'])){
 
         $filename = '';
         if(!empty($_FILES['image']['name'])){
-            $uploaddir = __DIR__ . '/cabinet/';
+            $uploaddir = __DIR__ . '/pablic/cabinet/';
             $userDir = 'user'.$_SESSION['user']['id'];
             if(!file_exists($userDir)){
                 @mkdir($uploaddir . $userDir . '/');
