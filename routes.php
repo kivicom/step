@@ -10,4 +10,5 @@ $routes = [
     "/allow" => "../allow.php",
     "/disallow" => "../disallow.php",
     "/delete" => "../delete.php",
+    "/store" => "../store.php",
 ];

@@ -1,8 +1,5 @@
 <?php
-
-$db = new Comment(Connection::make($config['database']));
-$comments = $db->getAll('comments');
-
+include 'include/index.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,6 +39,7 @@ $comments = $db->getAll('comments');
                     <?php if(!empty($_SESSION['user'])): ?>
                         <li class="nav-item"><a class="nav-link" href="../logout">Выход</a></li>
                         <li class="nav-item"><a class="nav-link" href="../profile">Профиль</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../admin">Админ</a></li>
                     <?php else: ?>
                     <li class="nav-item">
                         <a class="nav-link" href="../login">Login</a>
@@ -114,7 +112,7 @@ $comments = $db->getAll('comments');
 
                         <div class="card-body">
                             <?php if(isset($_SESSION['user'])):?>
-                            <form action="/store.php" method="post">
+                            <form action="/store" method="post">
                                 <div class="form-group">
                                     <?php if(!isset($_SESSION['user'])):?>
                                         <label for="exampleFormControlTextarea1">Имя</label>
@@ -138,7 +136,7 @@ $comments = $db->getAll('comments');
                                 <button type="submit" class="btn btn-success">Отправить</button>
                             </form>
                             <?php else:?>
-                                <span>Чтобы оcтавить комментарий, необходимо <a href="../login.php">авторизоваться</a></span>
+                                <span>Чтобы оcтавить комментарий, необходимо <a href="../login">авторизоваться</a></span>
                             <?php endif;?>
                         </div>
                     </div>

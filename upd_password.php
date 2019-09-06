@@ -1,19 +1,7 @@
 <?php
 session_start();
 
-require_once 'database/start.php';
-require_once 'functions.php';
 $db = new User(Connection::make($config['database']));
-
-function checkPassword($pass, $pass_confirm)
-{
-    if(($pass === $pass_confirm) && (strlen($pass) >= 6)){
-        return true;
-    }
-    return false;
-}
-
-
 
 if(empty($_POST['current']) || empty($_POST['password']) || empty($_POST['password_confirmation'])){
     $_SESSION['empty_err'] = 'Заполните необходимые поля';

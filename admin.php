@@ -1,8 +1,5 @@
 <?php
-
-$db = new Admin(Connection::make($config['database']));
-$comments = $db->getAll();
-
+include 'include/admin.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">

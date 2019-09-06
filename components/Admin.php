@@ -12,7 +12,7 @@ class Admin
 
     public function getAll()
     {
-        $sql = "SELECT comments.id as cid, comments.user_id, comments.text, comments.date, comments.published, users.id as uid, users.name, users.avatar FROM `comments` LEFT JOIN `users` ON comments.user_id = users.id ORDER BY comments.date DESC";
+        $sql = "SELECT comments.id as cid, comments.user_id, comments.text, comments.date, comments.published, users.id as uid, users.name, users.avatar FROM `comments` LEFT JOIN `users` ON comments.user_id = users.id ORDER BY comments.id DESC";
         $statement = $this->pdo->prepare($sql);
         $statement->execute();
         $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
