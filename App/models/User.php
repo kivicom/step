@@ -67,4 +67,31 @@ class User
         $statement = $this->pdo->prepare($query);
         $statement->execute(array(md5($password), $id));
     }
+
+    public static function uploadImage($image = ''){
+
+        if(!empty($image)){
+
+            $uploaddir = 'cabinet/';
+            //dd($uploaddir);
+            $userDir = 'user'.$_SESSION['user']['id'];
+            if(!file_exists($uploaddir . $userDir)){
+                mkdir($uploaddir . $userDir, 0777, true);
+            }
+            $extention = pathinfo($image['name'], PATHINFO_EXTENSION);
+            $filename = uniqid() . "." . $extention;
+            $isFile = array_diff(scandir($uploaddir . $userDir, 1), ['.','..']);
+            if(!empty($isFile)){
+                if(file_exists($uploaddir . $userDir . '/' . $isFile[0])){
+                    unlink($uploaddir . $userDir . '/' . $isFile[0]);
+                    unset($_SESSION['user']['avatar']);
+                }
+            }
+
+            if(move_uploaded_file($image['tmp_name'], $uploaddir . $userDir . '/' . $filename)){
+                $_SESSION['user']['avatar'] = $filename;
+            }
+        }
+        return $filename;
+    }
 }

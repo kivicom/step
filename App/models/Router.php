@@ -8,6 +8,7 @@ class Router{
     public static function getRoute($route, array $routes)
     {
         if(array_key_exists($route, $routes)){
+            //dd($routes);
             return $routes[$route];
             exit();
         }else{

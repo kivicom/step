@@ -1,6 +1,3 @@
-<?php
-include 'include/profile.php';
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +11,7 @@ include 'include/profile.php';
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="public/css/app.css" rel="stylesheet">
+    <link href="../../public/css/app.css" rel="stylesheet">
 </head>
 <body>
 <div id="app">
@@ -100,7 +97,7 @@ include 'include/profile.php';
                                         <?php if(!empty($user['avatar'])):?>
                                             <img src="cabinet/user<?php echo $_SESSION['user']['id'];?>/<?php echo $user['avatar'];?>" alt="" class="img-fluid">
                                         <?php else:?>
-                                            <img src="public/img/no-user.jpg" alt="" class="img-fluid">
+                                            <img src="../../public/img/no-user.jpg" alt="" class="img-fluid">
                                         <?php endif;?>
                                     </div>
 
@@ -130,7 +127,7 @@ include 'include/profile.php';
                                 </div>
                             <?php endif;?>
 
-                            <form action="upd_password.php" method="post">
+                            <form action="/upd" method="post">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">

@@ -1,6 +1,3 @@
-<?php
-include 'include/admin.php';
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +11,7 @@ include 'include/admin.php';
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="public/css/app.css" rel="stylesheet">
+    <link href="../../public/css/app.css" rel="stylesheet">
 </head>
 <body>
 <div id="app">
@@ -77,7 +74,7 @@ include 'include/admin.php';
                                 <tr>
                                     <td>
                                         <?php if(empty($comment['avatar'])):?>
-                                            <img src="public/img/no-user.jpg" alt="" class="img-fluid" width="64" height="64">
+                                            <img src="../../public/img/no-user.jpg" alt="" class="img-fluid" width="64" height="64">
                                         <?php else:?>
                                             <img src="cabinet/user<?php echo $comment['user_id'];?>/<?php echo $comment['avatar'];?>" alt="" class="img-fluid"  width="64" height="64">
                                         <?php endif;?>

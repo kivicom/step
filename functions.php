@@ -16,7 +16,7 @@ function checkEmail($email)
 }
 
 function isEmail($email, $is_email){
-    if(in_array($email, $is_email)){
+    if($email === $is_email){
         return true;
     }
     return false;
