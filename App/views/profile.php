@@ -1,53 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Comments</title>
-
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
-    <!-- Styles -->
-    <link href="../../public/css/app.css" rel="stylesheet">
-</head>
-<body>
-<div id="app">
-    <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                Project
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Left Side Of Navbar -->
-                <ul class="navbar-nav mr-auto">
-
-                </ul>
-
-                <!-- Right Side Of Navbar -->
-                <ul class="navbar-nav ml-auto">
-                    <!-- Authentication Links -->
-                    <?php if(!empty($_SESSION['user'])): ?>
-                        <li class="nav-item"><a class="nav-link" href="../logout">Выход</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../profile">Профиль</a></li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../login">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../register">Register</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<?php $this->layout('layout/layout', ['title' => 'Профиль','auth' => $auth,'user' => $user]) ?>
 
     <main class="py-4">
         <div class="container">
@@ -57,30 +8,21 @@
                         <div class="card-header"><h3>Профиль пользователя</h3></div>
 
                         <div class="card-body">
-                            <?php if(isset($_SESSION['success'])):?>
-                                <div class="alert alert-success" role="alert">
-                                    <?php echo $_SESSION['success']; unset($_SESSION['success']);?>
-                                </div>
-                            <?php endif;?>
-
-                            <?php if(isset($_SESSION['field_err'])):?>
-                                <div class="alert alert-danger" role="alert">
-                                    <?php echo $_SESSION['field_err']; unset($_SESSION['field_err']);?>
-                                </div>
-                            <?php endif;?>
+                            <?php echo flash()->display();?>
 
                             <form action="" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="id" value="<?php echo $this->e($user['id']);?>">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">Name</label>
-                                            <input type="text" class="form-control" name="name" id="exampleFormControlInput1" value="<?php echo $_SESSION['user']['name'];?>">
+                                            <input type="text" class="form-control" name="username" id="exampleFormControlInput1" value="<?php echo $this->e($user['username']);?>">
 
                                         </div>
 
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">Email</label>
-                                            <input type="email" class="form-control" name="email" id="exampleFormControlInput1" value="<?php echo $_SESSION['user']['email'];?>">
+                                            <input type="" class="form-control" name="email" id="exampleFormControlInput1" value="<?php echo $this->e($user['email']);?>">
                                             <?php if(isset($_SESSION['email_err'])):?>
                                                 <span class="text text-danger">
                                                     <?php echo $_SESSION['email_err']; unset($_SESSION['email_err']);?>
@@ -93,13 +35,15 @@
                                             <input type="file" class="form-control" name="image" id="exampleFormControlInput1">
                                         </div>
                                     </div>
+
                                     <div class="col-md-4">
-                                        <?php if(!empty($user['avatar'])):?>
-                                            <img src="cabinet/user<?php echo $_SESSION['user']['id'];?>/<?php echo $user['avatar'];?>" alt="" class="img-fluid">
+                                        <?php if(!empty($user['image'])):?>
+                                            <img src="cabinet/user<?php echo $_SESSION['user']['id'];?>/<?php echo $user['image'];?>" alt="" class="img-fluid">
                                         <?php else:?>
                                             <img src="../../public/img/no-user.jpg" alt="" class="img-fluid">
                                         <?php endif;?>
                                     </div>
+                                    <input type="hidden" name="edit_user">
 
                                     <div class="col-md-12">
                                         <button class="btn btn-warning">Edit profile</button>
@@ -127,7 +71,8 @@
                                 </div>
                             <?php endif;?>
 
-                            <form action="/upd" method="post">
+                            <form action="" method="post">
+                                <input type="hidden" name="upd">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">
@@ -166,6 +111,3 @@
             </div>
         </div>
     </main>
-</div>
-</body>
-</html>
