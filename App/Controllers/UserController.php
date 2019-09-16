@@ -92,6 +92,7 @@ class UserController
                 }
 
                 $_SESSION['user']['id'] .= $this->auth->getUserId();
+                $_SESSION['user']['name'] .= $this->auth->getUsername();
 
                 flash()->success('Вы успешно авторизовались');
                 header('Location: /profile');

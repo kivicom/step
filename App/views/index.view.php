@@ -8,7 +8,7 @@
                         <div class="card-header"><h3>Комментарии</h3></div>
 
                         <div class="card-body">
-                            <?php  flash()->display();?>
+                            <?php  echo flash()->display();?>
 
                             <!--12/10/2025-->
                             <?php if($items) :?>
@@ -71,7 +71,7 @@
                                 <div class="form-group">
                                     <?php if(!isset($_SESSION['user'])):?>
                                         <label for="exampleFormControlTextarea1">Имя</label>
-                                        <input name="name" class="form-control" id="exampleFormControlTextarea1" />
+                                        <input name="username" class="form-control" id="exampleFormControlTextarea1" />
                                     <?php else:?>
                                         <input name="name" type="hidden" class="form-control" id="exampleFormControlTextarea1" value="<?php echo $_SESSION['user']['name'];?>"/>
                                         <input name="user_id" type="hidden" class="form-control" id="exampleFormControlTextarea1" value="<?php echo $_SESSION['user']['id'];?>"/>
