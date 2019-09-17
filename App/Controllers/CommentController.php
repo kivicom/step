@@ -7,9 +7,9 @@ class CommentController
 {
     private $db;
 
-    public function __construct()
+    public function __construct(Comment $objComment)
     {
-        $this->db = new Comment();
+        $this->db = $objComment;
     }
 
     public function addComment()

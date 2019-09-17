@@ -1,8 +1,6 @@
 <?php
 namespace  App\Models;
-use Aura\SqlQuery\Mysql\Select;
 use Aura\SqlQuery\QueryFactory;
-use DB\Connection;
 use PDO;
 
 class User
@@ -10,10 +8,10 @@ class User
     private $pdo;
     private $queryFactory;
 
-    public function __construct()
+    public function __construct(\PDO $pdo, QueryFactory $queryFactory)
     {
-        $this->pdo = Connection::make();
-        $this->queryFactory = new QueryFactory('mysql');
+        $this->pdo = $pdo;
+        $this->queryFactory = $queryFactory;
     }
 
     public function userUpdate($table, $id, $data, $image = '')

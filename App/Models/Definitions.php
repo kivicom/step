@@ -3,6 +3,8 @@
 namespace App\Models;
 
 
+use Aura\SqlQuery\QueryFactory;
+use DB\Connection;
 use Delight\Auth\Auth;
 use DI\ContainerBuilder;
 use League\Plates\Engine;
@@ -17,9 +19,11 @@ class Definitions
             Engine::class => function(){
                 return new Engine('../App/views');
             },
+            QueryFactory::class => function(){
+                return new QueryFactory('mysql');
+            },
             \PDO::class => function(){
-                return new \PDO("mysql:host=127.0.0.1;
-                        dbname=marlinstep;charset=utf8","root","");
+                return Connection::make();
             },
             Auth::class => function($container){
                 return new Auth($container->get('PDO'));

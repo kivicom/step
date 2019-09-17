@@ -1,8 +1,6 @@
 <?php
 namespace App\Models;
-
 use Aura\SqlQuery\QueryFactory;
-use DB\Connection;
 use PDO;
 
 class Comment
@@ -10,12 +8,11 @@ class Comment
     private $pdo;
     private $queryFactory;
 
-    public function __construct()
+    public function __construct(PDO $pdo, QueryFactory $queryFactory)
     {
-        $this->pdo = Connection::make();
-        $this->queryFactory = new QueryFactory('mysql');
+        $this->pdo = $pdo;
+        $this->queryFactory = $queryFactory;
     }
-
     public function getAll($table)
     {
         $select = $this->queryFactory->newSelect();
@@ -24,13 +21,10 @@ class Comment
             ->join('LEFT', 'users', "`users`.id = {$table}.`user_id`")
             ->orderBy(["$table.id DESC"]) ;
         $sth = $this->pdo->prepare($select->getStatement());
-
         $sth->execute($select->getBindValues());
         $comments = $sth->fetchAll(PDO::FETCH_ASSOC);
-
         return $comments;
     }
-
     public function addComment($table, $data)
     {
         $insert = $this->queryFactory->newInsert();

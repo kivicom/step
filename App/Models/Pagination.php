@@ -2,7 +2,6 @@
 namespace App\Models;
 
 use Aura\SqlQuery\QueryFactory;
-use DB\Connection;
 use PDO;
 
 class Pagination
@@ -10,13 +9,13 @@ class Pagination
     private $pdo;
     private $queryFactory;
 
-    public function __construct()
+    public function __construct(\PDO $pdo, QueryFactory $queryFactory)
     {
-        $this->pdo = Connection::make();
-        $this->queryFactory = new QueryFactory('mysql');
+        $this->pdo = $pdo;
+        $this->queryFactory = $queryFactory;
     }
 
-    public function getCommentsOnPagination($table, $itemsPerPage, $currentPage)
+    public function getItemsOnPagination($table, $itemsPerPage, $currentPage)
     {
         $select = $this->queryFactory->newSelect();
         $select->cols(['*'])

@@ -2,7 +2,6 @@
 namespace App\Controllers;
 use App\Models\Admin;
 use App\Models\Pagination;
-use DB\Connection;
 use Delight\Auth\Auth;
 use JasonGrimes\Paginator;
 use League\Plates\Engine;
@@ -15,13 +14,13 @@ class AdminController
     private $pdo;
     public $pagination;
 
-    public function __construct()
+    public function __construct(\PDO $pdo, Auth $auth, Engine $engine, Pagination $pagination, Admin $objAdmin)
     {
-        $this->pdo = Connection::make();
-        $this->auth = new Auth($this->pdo);
-        $this->db = new Admin();
-        $this->templates = new Engine('../App/views');
-        $this->pagination = new Pagination();
+        $this->pdo = $pdo;
+        $this->auth = $auth;
+        $this->db = $objAdmin;
+        $this->templates = $engine;
+        $this->pagination = $pagination;
     }
     public function Index()
     {
@@ -39,7 +38,7 @@ class AdminController
             $auth = false;
         }
         $totalComments = count($this->db->getAll('comments'));
-        $items = $this->pagination->getCommentsOnPagination('comments', $itemsPerPage, $currentPage);
+        $items = $this->pagination->getItemsOnPagination('comments', $itemsPerPage, $currentPage);
 
 
         $paginator = new Paginator($totalComments, $itemsPerPage, $currentPage, $urlPattern);

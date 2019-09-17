@@ -7,14 +7,14 @@ class Connection
 {
     private $pdo;
 
+
     public static function make()
     {
+        //$config = require_once '../config.php';
         $pdo = new PDO(
             "mysql:host=127.0.0.1; dbname=marlinstep;charset=utf8",
             "root",
             "");
-
-        //$config = require_once '../config.php';
         /*$pdo = new PDO(
             "{$config['database']['connection']}; dbname={$config['database']['database']};charset={$config['database']['charset']}",
             "{$config['database']['username']}",

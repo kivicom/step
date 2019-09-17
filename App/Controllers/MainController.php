@@ -2,7 +2,6 @@
 namespace App\Controllers;
 
 use App\Models\Comment;
-use DB\Connection;
 use Delight\Auth\Auth;
 use JasonGrimes\Paginator;
 use League\Plates\Engine;
@@ -16,7 +15,7 @@ class MainController
     public $pagination;
     private $auth;
 
-    public function __construct(Connection $pdo, Auth $auth, Comment $objComment, Engine $engine, Pagination $pagination)
+    public function __construct(\PDO $pdo, Auth $auth, Comment $objComment, Engine $engine, Pagination $pagination)
     {
         $this->pdo = $pdo;
         $this->auth = $auth;
@@ -39,7 +38,7 @@ class MainController
 
         $totalComments = count($this->db->getAll('comments'));
 
-        $items = $this->pagination->getCommentsOnPagination('comments', $itemsPerPage, $currentPage);
+        $items = $this->pagination->getItemsOnPagination('comments', $itemsPerPage, $currentPage);
 
 
         $paginator = new Paginator($totalComments, $itemsPerPage, $currentPage, $urlPattern);

@@ -12,13 +12,15 @@ class UserController
 {
     private $pdo;
     public $templates;
+    public $user;
     private $auth;
 
-    public function __construct()
+    public function __construct(\PDO $pdo, Engine $engine, Auth $auth, User $user)
     {
-        $this->templates = new Engine('../App/views');
-        $this->pdo = Connection::make();
-        $this->auth = new Auth($this->pdo);
+        $this->templates = $engine;
+        $this->pdo = $pdo;
+        $this->auth = $auth;
+        $this->user = $user;
     }
 
      public function Profile()
@@ -34,8 +36,7 @@ class UserController
              $this->UpdPassword();
          }
 
-         $user = new User();
-         $user = $user->getUserInfo('users', $this->auth->getUserId());
+         $user = $this->user->getUserInfo('users', $this->auth->getUserId());
 
          echo $this->templates->render('profile', ['user' => $user, 'auth' => $auth]);
     }
@@ -50,11 +51,11 @@ class UserController
                 echo header('Location: /profile');
                 exit();
             }
-            $user = new User();
+
             if(!empty($_FILES)){
                 $image = Image::uploadImage($_FILES['image'], $this->auth->getUserId(), 'cabinet/','user'.$this->auth->getUserId());
             }
-            $result = $user->userUpdate('users', $this->auth->getUserId(), $_POST, $image);
+            $result = $this->user->userUpdate('users', $this->auth->getUserId(), $_POST, $image);
             if($result){
                 unset($_SESSION['user']['name']);
                 unset($_SESSION['user']['email']);
@@ -157,8 +158,7 @@ class UserController
     public function SendAfterRegister($email, $username, $selector, $token)
     {
         $subject = 'Информация с сайта http://marlinstep.loc';
-        $url = 'http://marlinstep.loc/verify_email?selector=' . \urlencode($selector) . '&token=' . \urlencode($token);
-        $message = '<a href="{$url}">Подвердить регистрацию</a>';
+        $message = '<a href="http://marlinstep.loc/verification?selector='. \urlencode($selector) . '&token='.\urlencode($token).'">Подвердить регистрацию</a>';
         SimpleMail::make()
             ->setTo($email, $username)
             ->setFrom('marlinstep@loc.com', 'Marlinstep')
@@ -168,7 +168,7 @@ class UserController
             ->send();
     }
 
-    public function emailVerification()
+    public function verify_email()
     {
         try {
             $this->auth->confirmEmail($_GET['selector'], $_GET['token']);

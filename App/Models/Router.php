@@ -2,7 +2,6 @@
 namespace App\Models;
 
 use FastRoute;
-use App\Models\Definitions;
 
 class Router{
 
@@ -18,7 +17,7 @@ class Router{
             $r->addRoute('POST', '/login', ['App\Controllers\UserController', 'Login']);
 
             $r->addRoute('GET', '/register', ['App\Controllers\UserController', 'Register']);
-            $r->addRoute('GET', '/verification', ['App\Controllers\UserController', 'emailVerification']);
+            $r->addRoute('GET', '/verification', ['App\Controllers\UserController', 'verify_email']);
             $r->addRoute('POST', '/register', ['App\Controllers\UserController', 'Register']);
             $r->addRoute('GET', '/logout', ['App\Controllers\UserController', 'Logout']);
 
