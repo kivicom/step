@@ -6,7 +6,6 @@ use DB\Connection;
 use Delight\Auth\Auth;
 use JasonGrimes\Paginator;
 use League\Plates\Engine;
-use \Tamtamchik\SimpleFlash\Flash;
 use App\Models\Pagination;
 
 class MainController
@@ -17,13 +16,13 @@ class MainController
     public $pagination;
     private $auth;
 
-    public function __construct()
+    public function __construct(Connection $pdo, Auth $auth, Comment $objComment, Engine $engine, Pagination $pagination)
     {
-        $this->pdo = Connection::make();
-        $this->auth = new Auth($this->pdo);
-        $this->db = new Comment();
-        $this->templates = new Engine('../App/views');
-        $this->pagination = new Pagination();
+        $this->pdo = $pdo;
+        $this->auth = $auth;
+        $this->db = $objComment;
+        $this->templates = $engine;
+        $this->pagination = $pagination;
     }
 
     public function Index()

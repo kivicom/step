@@ -1,8 +1,11 @@
 <?php
 namespace App\Models;
+
 use FastRoute;
+use App\Models\Definitions;
 
 class Router{
+
     public static function getRouter(){
         $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
             $r->addRoute('GET', '/', ['App\Controllers\MainController', 'Index']);
@@ -48,8 +51,9 @@ class Router{
             case FastRoute\Dispatcher::FOUND:
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
-                $controller = new $handler[0];
-                call_user_func([$controller, $handler[1]], $vars);
+                $containerBuilder = Definitions::addDefinitions();
+                $container = $containerBuilder->build();
+                $container->call($routeInfo[1], $routeInfo[2]);
                 break;
         }
     }
