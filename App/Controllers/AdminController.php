@@ -11,12 +11,10 @@ class AdminController
     public $db;
     public $templates;
     private $auth;
-    private $pdo;
     public $pagination;
 
-    public function __construct(\PDO $pdo, Auth $auth, Engine $engine, Pagination $pagination, Admin $objAdmin)
+    public function __construct(Auth $auth, Engine $engine, Pagination $pagination, Admin $objAdmin)
     {
-        $this->pdo = $pdo;
         $this->auth = $auth;
         $this->db = $objAdmin;
         $this->templates = $engine;

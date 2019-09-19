@@ -1,4 +1,4 @@
-<?php $this->layout('layout/layout', ['title' => 'Главная','auth' => $auth]) ?>
+<?php $this->layout('layout/layout', ['title' => 'Главная','auth' => $auth]); ?>
 
     <main class="py-4">
         <div class="container">
@@ -8,7 +8,8 @@
                         <div class="card-header"><h3>Комментарии</h3></div>
 
                         <div class="card-body">
-                            <?php  echo flash()->display();?>
+
+                            <?php echo flash()->display();?>
 
                             <!--12/10/2025-->
                             <?php if($items) :?>
@@ -76,6 +77,7 @@
                                         <input name="name" type="hidden" class="form-control" id="exampleFormControlTextarea1" value="<?php echo $_SESSION['user']['name'];?>"/>
                                         <input name="user_id" type="hidden" class="form-control" id="exampleFormControlTextarea1" value="<?php echo $_SESSION['user']['id'];?>"/>
                                     <?php endif;?>
+
                                     <?php if(isset($_SESSION['name_err'])):?>
                                         <span class="text-danger">Ошибка. Поле имя не заполненно</span>
                                     <?php unset($_SESSION['name_err']);?>
@@ -84,6 +86,8 @@
                                 <div class="form-group">
                                     <label for="exampleFormControlTextarea1">Сообщение</label>
                                     <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+
+
                                     <?php if(isset($_SESSION['text_err'])):?>
                                         <span class="text-danger">Ошибка. Поле комментарий не заполненно</span>
                                         <?php unset($_SESSION['text_err']);?>

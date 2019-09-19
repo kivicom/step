@@ -3,37 +3,30 @@ namespace App\Controllers;
 
 use App\Models\Image;
 use App\Models\User;
-use DB\Connection;
 use Delight\Auth\Auth;
 use League\Plates\Engine;
 use SimpleMail;
 
 class UserController
 {
-    private $pdo;
     public $templates;
     public $user;
     private $auth;
 
-    public function __construct(\PDO $pdo, Engine $engine, Auth $auth, User $user)
+    public function __construct(Engine $engine, Auth $auth, User $user)
     {
         $this->templates = $engine;
-        $this->pdo = $pdo;
         $this->auth = $auth;
         $this->user = $user;
     }
 
-     public function Profile()
+    public function Profile()
      {
          if ($this->auth->isLoggedIn()) {
              $auth = true;
          }else {
              $auth = false;
              header('Location: /login');
-         }
-
-         if(isset($_POST['upd'])){
-             $this->UpdPassword();
          }
 
          $user = $this->user->getUserInfo('users', $this->auth->getUserId());
@@ -66,18 +59,16 @@ class UserController
             }
 
         }
+
+        if(isset($_POST['upd'])){
+            $this->UpdPassword();
+        }
         header('Location: /profile');
         exit();
     }
 
     public function Login()
     {
-        if ($this->auth->isLoggedIn()) {
-            header('Location: /profile');
-        }else {
-            $auth = false;
-        }
-
         if($_POST){
             if (isset($_POST['remember']) == 1) {
                 $rememberDuration = (int) (60 * 60 * 24 * 365.25);
@@ -87,9 +78,22 @@ class UserController
             }
 
             try {
-                $this->auth->login($_POST['email'], md5($_POST['password']), $rememberDuration);
+                $data = $_POST;
+                $this->user->load($data);
+                $key = array_keys($data);
+                $rules = [
+                    'required' => $key,
+                    'email' => ['email'],
+                    'lengthMin' => [
+                        ['password', 6],
+                    ]
+                ];
+                if(!$this->user->Validate($data, $rules)){
+                    $this->user->getErrors();
+                }
+                $this->auth->login($_POST['email'], $_POST['password'], $rememberDuration);
                 foreach ($_POST as $key => $item) {
-                    $_SESSION['user'][$key] = $item;
+                    if($key != 'password') $_SESSION['user'][$key] = $item;
                 }
 
                 $_SESSION['user']['id'] .= $this->auth->getUserId();
@@ -97,60 +101,88 @@ class UserController
 
                 flash()->success('Вы успешно авторизовались');
                 header('Location: /profile');
+                die();
             }
             catch (\Delight\Auth\InvalidEmailException $e) {
-                flash()->error('Wrong email address');
+                $_SESSION['error']['email'] = 'Wrong email address';
             }
             catch (\Delight\Auth\InvalidPasswordException $e) {
-                flash()->error('Wrong password');
+                $_SESSION['error']['password'] = 'Wrong password';
             }
             catch (\Delight\Auth\EmailNotVerifiedException $e) {
-                flash()->error('Email not verified');
+                $_SESSION['error']['email'] = 'Email not verified';
             }
             catch (\Delight\Auth\TooManyRequestsException $e) {
                 flash()->error('Too many requests');
             }
         }
+
+        if ($this->auth->isLoggedIn()) {
+            header('Location: /profile');
+        }else {
+            $auth = false;
+        }
+
         echo $this->templates->render('login', ['auth' => $auth]);
     }
 
     public function Register()
     {
+        if($_POST){
+            $data = $_POST;
+            $this->user->load($data);
+            $key = array_keys($data);
+            $rules = [
+                'required' => $key,
+                'email' => [
+                    ['email'],
+                ],
+                'lengthMin' => [
+                    ['password', 6],
+                ],
+                'equals' => [
+                    ['password','password_confirmation'],
+                ]
+            ];
+
+            if(!$this->user->Validate($data, $rules)){
+                $this->user->getErrors();
+            }else{
+                try {
+                    $userId = $this->auth->register($_POST['email'], $_POST['password'], $_POST['username'], function ($selector, $token) {
+                        $this->SendAfterRegister($_POST['email'], $_POST['username'], $selector, $token);
+                    });
+
+                    if($userId){
+                        flash()->success('Вы успешно зарегистрировались. Теперь можете авторизоваться.');
+                        echo header('Location: /login');
+                        exit();
+                    }else{
+                        flash()->error('Ошибка решистрации. Пожалуйста, повторите позже.');
+                        echo header('Location : /register');
+                        exit();
+                    }
+                }
+                catch (\Delight\Auth\InvalidEmailException $e) {
+                    //flash()->error('Invalid email address');
+                }
+                catch (\Delight\Auth\InvalidPasswordException $e) {
+                    //flash()->error('Invalid password');
+                }
+                catch (\Delight\Auth\UserAlreadyExistsException $e) {
+                    flash()->error('User already exists');
+                }
+                catch (\Delight\Auth\TooManyRequestsException $e) {
+                    flash()->error('Too many requests');
+                }
+            }
+            header('Location: /register');
+            die;
+        }
         if ($this->auth->isLoggedIn()) {
             $auth = true;
         }else {
             $auth = false;
-        }
-
-        if ($_POST){
-
-            try {
-                $userId = $this->auth->register($_POST['email'], md5($_POST['password']), $_POST['username'], function ($selector, $token) {
-                    $this->SendAfterRegister($_POST['email'], $_POST['username'], $selector, $token);
-                });
-
-                if($userId){
-                    flash()->success('Вы успешно зарегистрировались. Теперь можете авторизоваться.');
-                    echo header('Location: /login');
-                    exit();
-                }else{
-                    flash()->error('Ошибка решистрации. Пожалуйста, повторите позже.');
-                    echo header('Location : /register');
-                    exit();
-                }
-            }
-            catch (\Delight\Auth\InvalidEmailException $e) {
-                flash()->error('Invalid email address');
-            }
-            catch (\Delight\Auth\InvalidPasswordException $e) {
-                flash()->error('Invalid password');
-            }
-            catch (\Delight\Auth\UserAlreadyExistsException $e) {
-                flash()->error('User already exists');
-            }
-            catch (\Delight\Auth\TooManyRequestsException $e) {
-                flash()->error('Too many requests');
-            }
         }
         echo $this->templates->render('register', ['auth' => $auth]);
     }
@@ -194,20 +226,73 @@ class UserController
 
     public function UpdPassword()
     {
-        try {
-            $this->auth->changePassword(md5($_POST['current']), md5($_POST['password']));
+        if($this->checkEmptyUpdPassword()){
+            $data = $_POST;
+            $this->user->load($data);
+            $key = array_keys($data);
+            $rules = [
+                'required' => $key,
+                'lengthMin' => [
+                    ['password', 6],
+                ]
+            ];
+            if(!$this->user->Validate($data, $rules)){
+                $this->user->getErrors();
+            }
+            try {
+                $this->auth->changePassword($_POST['current'], $_POST['newpassword']);
 
-            flash()->success('Password has been changed');
+                flash()->success('Password has been changed');
+            }
+            catch (\Delight\Auth\NotLoggedInException $e) {
+                flash()->error('Not logged in');
+            }
+            catch (\Delight\Auth\InvalidPasswordException $e) {
+                $_SESSION['password_error'] = 'Invalid password(s)';
+            }
+            catch (\Delight\Auth\TooManyRequestsException $e) {
+                flash()->error('Too many requests');
+            }
         }
-        catch (\Delight\Auth\NotLoggedInException $e) {
-            flash()->error('Not logged in');
+    }
+
+    public function checkEmptyUpdPassword()
+    {
+        if(empty($_POST['current'])) {
+            $_SESSION['error']['current'] = "Поле Current password не должно быть пустым";
+            return false;
         }
-        catch (\Delight\Auth\InvalidPasswordException $e) {
-            flash()->error('Invalid password(s)');
+        if(empty($_POST['newpassword'])) {
+            $_SESSION['error']['newpassword'] = "Поле New password не должно быть пустым";
+            return false;
         }
-        catch (\Delight\Auth\TooManyRequestsException $e) {
-            flash()->error('Too many requests');
+        if(empty($_POST['password_confirmation'])) {
+            $_SESSION['error']['password_confirmation'] = "Поле Password confirmation не должно быть пустым";
+            return false;
         }
+
+        if($_POST['newpassword'] === $_POST['current']){
+            $_SESSION['error']['newpassword'] = "Новый пароль не должен совпадать с прежним";
+            return false;
+        }
+
+        if(!$this->checkPassword($_POST['newpassword'], $_POST['password_confirmation'])) {
+            $_SESSION['error']['password_confirmation'] = "Поля 'New password' и 'Password confirmation' не совпадают";
+            return false;
+        }
+        if(!$this->auth->reconfirmPassword($_POST['current'])) {
+            $_SESSION['error']['current'] = "Текущий пароль не верный";
+            return false;
+        }
+        return true;
+    }
+
+    public function checkPassword($pass, $pass_confirm)
+    {
+        if(($pass === $pass_confirm) && (strlen($pass) >= 6)){
+            return true;
+        }
+        return false;
     }
 
     public function Logout()

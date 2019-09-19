@@ -2,7 +2,6 @@
 namespace App\Models;
 
 use Aura\SqlQuery\QueryFactory;
-use DB\Connection;
 use PDO;
 
 class Admin
@@ -10,7 +9,7 @@ class Admin
     private $pdo;
     private $queryFactory;
 
-    public function __construct(\PDO $pdo, QueryFactory $queryFactory)
+    public function __construct(PDO $pdo, QueryFactory $queryFactory)
     {
         $this->pdo = $pdo;
         $this->queryFactory = $queryFactory;
@@ -21,7 +20,7 @@ class Admin
         $select = $this->queryFactory->newSelect();
         $select->cols(['*', 'comments.id as cid', 'users.id as uid'])
             ->from($table)
-            ->join('LEFT', 'users', "`users`.id = {$table}.`user_id`")
+            ->join('LEFT', 'users', "{$table}.`user_id` = `users`.id")
             ->orderBy(["$table.id DESC"]) ;
         $sth = $this->pdo->prepare($select->getStatement());
         $sth->execute($select->getBindValues());

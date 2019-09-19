@@ -15,7 +15,8 @@
     "jasongrimes/paginator": "~1.0",
     "tamtamchik/simple-flash": "^1.2",
     "eoghanobrien/php-simple-mail": "^1.7",
-    "php-di/php-di": "^6.0"
+    "php-di/php-di": "^6.0",
+    "vlucas/valitron": "^1.4"
   },
   "require-dev": {
     "kint-php/kint": "^3.2"

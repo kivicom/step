@@ -2,14 +2,16 @@
 namespace App\Controllers;
 
 use App\Models\Comment;
+use \Tamtamchik\SimpleFlash\Flash;
+
 
 class CommentController
 {
     private $db;
 
-    public function __construct(Comment $objComment)
+    public function __construct(Comment $objComments)
     {
-        $this->db = $objComment;
+        $this->db = $objComments;
     }
 
     public function addComment()
@@ -17,21 +19,22 @@ class CommentController
         if(!empty($_POST['name']) && !empty($_POST['text'])) {
             $query = $this->db->addComment('comments', $_POST);
             if($query){
-                flash()->success('Комментарий успешно добавлен!');
+                $msg = flash()->success('Комментарий успешно добавлен!');
             }else{
                 echo 'Сообщение не отправлено!';
-                flash()->error('Ошибка. Комментарий не добавлен');
+                $msg = flash()->error('Ошибка. Комментарий не добавлен');
             }
             header('Location: /');
             exit;
         }else {
             if (empty($_POST['name'])) {
-                flash()->error('Ошибка. Поле имя не заполненно');
+                $msg = flash()->error('Ошибка. Поле имя не заполненно');
             }
             if (empty($_POST['text'])) {
-                flash()->error('Ошибка. Поле комментарий не заполненно');
+                $msg = flash()->error('Ошибка. Поле комментарий не заполненно');
             }
-            echo header('Location: /');
+            header('Location: /');
         }
     }
+
 }

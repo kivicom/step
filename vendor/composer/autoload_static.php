@@ -15,6 +15,10 @@ class ComposerStaticInit3a0c318c999347f3a00a00714195c978
     );
 
     public static $prefixLengthsPsr4 = array (
+        'V' => 
+        array (
+            'Valitron\\' => 9,
+        ),
         'T' => 
         array (
             'Tamtamchik\\SimpleFlash\\' => 23,
@@ -67,6 +71,10 @@ class ComposerStaticInit3a0c318c999347f3a00a00714195c978
     );
 
     public static $prefixDirsPsr4 = array (
+        'Valitron\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/vlucas/valitron/src/Valitron',
+        ),
         'Tamtamchik\\SimpleFlash\\' => 
         array (
             0 => __DIR__ . '/..' . '/tamtamchik/simple-flash/src',

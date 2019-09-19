@@ -7,7 +7,9 @@
                     <div class="card">
                         <div class="card-header">Login</div>
                         <div class="card-body">
+
                             <?php echo flash()->display();?>
+
                             <form method="POST" action="">
 
                                 <div class="form-group row">
@@ -15,10 +17,10 @@
 
                                     <div class="col-md-6">
                                         <input id="email" type="email" class="form-control" name="email"  autocomplete="email" >
-                                        <?php if(isset($_SESSION['email_err'])):?>
-                                            <div class="alert alert-danger" role="alert">
-                                                <?php echo $_SESSION['email_err']; unset($_SESSION['email_err']);?>
-                                            </div>
+                                        <?php if(isset($_SESSION['error']['email'])):?>
+                                            <span class="text-danger">
+                                                <?php echo $_SESSION['error']['email']; unset($_SESSION['email_error']);?>
+                                            </span>
                                         <?php endif;?>
                                     </div>
                                 </div>
@@ -28,12 +30,12 @@
 
                                     <div class="col-md-6">
                                         <input id="password" type="password" class="form-control" name="password"  autocomplete="current-password">
+                                        <?php if(isset($_SESSION['error']['password'])):?>
+                                            <span class="text-danger">
+                                                <?php echo $_SESSION['error']['password']; unset($_SESSION['email_error']);?>
+                                            </span>
+                                        <?php endif;?>
                                     </div>
-                                    <?php if(isset($_SESSION['pass_err'])):?>
-                                        <div class="alert alert-danger" role="alert">
-                                            <?php echo $_SESSION['pass_err']; unset($_SESSION['pass_err']);?>
-                                        </div>
-                                    <?php endif;?>
                                 </div>
 
                                 <div class="form-group row">

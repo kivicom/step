@@ -59,17 +59,8 @@
                         <div class="card-header"><h3>Безопасность</h3></div>
 
                         <div class="card-body">
-                            <?php if(isset($_SESSION['pass_success'])):?>
-                            <div class="alert alert-success" role="alert">
-                                <?php echo $_SESSION['pass_success']; unset($_SESSION['pass_success']);?>
-                            </div>
-                            <?php endif;?>
 
-                            <?php if(isset($_SESSION['empty_err'])):?>
-                                <div class="alert alert-danger" role="alert">
-                                    <?php echo $_SESSION['empty_err']; unset($_SESSION['empty_err']);?>
-                                </div>
-                            <?php endif;?>
+                            <?php echo flash()->display();?>
 
                             <form action="" method="post">
                                 <input type="hidden" name="upd">
@@ -78,20 +69,19 @@
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">Current password</label>
                                             <input type="password" name="current" class="form-control" id="exampleFormControlInput1">
-
-                                            <?php if(isset($_SESSION['newpass_err'])):?>
+                                            <?php if(isset($_SESSION['error']['current'])):?>
                                                 <span class="text text-danger">
-                                                    <?php echo $_SESSION['newpass_err']; unset($_SESSION['newpass_err']);?>
+                                                    <?php echo $_SESSION['error']['current']; unset($_SESSION['error']['current']);?>
                                                 </span>
                                             <?php endif;?>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">New password</label>
-                                            <input type="password" name="password" class="form-control" id="exampleFormControlInput1">
-                                            <?php if(isset($_SESSION['pass_err'])):?>
+                                            <input type="password" name="newpassword" class="form-control" id="exampleFormControlInput1">
+                                            <?php if(isset($_SESSION['error']['newpassword'])):?>
                                                 <span class="text text-danger">
-                                                    <?php echo $_SESSION['pass_err']; unset($_SESSION['pass_err']);?>
+                                                    <?php echo $_SESSION['error']['newpassword']; unset($_SESSION['error']['newpassword']);?>
                                                 </span>
                                             <?php endif;?>
                                         </div>
@@ -99,6 +89,11 @@
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">Password confirmation</label>
                                             <input type="password" name="password_confirmation" class="form-control" id="exampleFormControlInput1">
+                                            <?php if(isset($_SESSION['error']['password_confirmation'])):?>
+                                                <span class="text text-danger">
+                                                    <?php echo $_SESSION['error']['password_confirmation']; unset($_SESSION['error']['password_confirmation']);?>
+                                                </span>
+                                            <?php endif;?>
                                         </div>
 
                                         <button class="btn btn-success">Submit</button>

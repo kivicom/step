@@ -22,13 +22,7 @@ function isEmail($email, $is_email){
     return false;
 }
 
-function checkPassword($pass, $pass_confirm)
-{
-    if(($pass === $pass_confirm) && (strlen($pass) >= 6)){
-        return true;
-    }
-    return false;
-}
+
 
 function generateCode($length=6) {
     $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRQSTUVWXYZ0123456789";

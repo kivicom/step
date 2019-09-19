@@ -18,11 +18,11 @@ class Pagination
     public function getItemsOnPagination($table, $itemsPerPage, $currentPage)
     {
         $select = $this->queryFactory->newSelect();
-        $select->cols(['*'])
-            ->from($table)
+        $select->cols(['*', 'comments.id as cid', 'users.id as uid'])
+            ->from('users')
             ->setPaging($itemsPerPage)
             ->page($currentPage)
-            ->join('LEFT', 'users', "`users`.id = {$table}.`user_id`")
+            ->join('LEFT', $table, "`users`.id = {$table}.`user_id`")
             ->orderBy(["$table.id DESC"]) ;
         $sth = $this->pdo->prepare($select->getStatement());
 

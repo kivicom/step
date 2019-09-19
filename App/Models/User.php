@@ -2,11 +2,24 @@
 namespace  App\Models;
 use Aura\SqlQuery\QueryFactory;
 use PDO;
+use Valitron\Validator;
 
 class User
 {
     private $pdo;
     private $queryFactory;
+
+    public $attributes = [
+        'username' => '',
+        'email' => '',
+        'password' => '',
+        'password_confirmation' => '',
+    ];
+
+    public $rules = [];
+
+    public $errors = [];
+
 
     public function __construct(\PDO $pdo, QueryFactory $queryFactory)
     {
@@ -46,5 +59,33 @@ class User
         $user = $sth->fetch(PDO::FETCH_ASSOC);
 
         return $user;
+    }
+
+    public function load($data){
+        foreach($this->attributes as $name => $value){
+            if(isset($data[$name])){
+                $this->attributes[$name] = $data[$name];
+            }
+        }
+    }
+
+    public function Validate($data, $rules){
+        $v = new Validator($data);
+        $v->rules($rules);
+        if($v->validate()){
+            return true;
+        }
+        $this->errors = $v->errors();
+        return false;
+    }
+
+    public function getErrors()
+    {
+        foreach ($this->errors as $key => $error) {
+            foreach ($error as $item) {
+                $errors = $item;
+            }
+            $_SESSION['error'][$key] = $errors;
+        }
     }
 }

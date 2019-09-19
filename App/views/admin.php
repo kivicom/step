@@ -44,7 +44,7 @@
                                         <?php else:?>
                                             <form action="" method="POST">
                                                 <button type="submit" class="btn btn-warning" >Запретить</button>
-                                                <input type="hidden" name="id" value="<?php echo $this->e($item['cid']);?>">
+                                                <input type="hidden" name="id" value="<?php echo $item['cid'];?>">
                                                 <input type="hidden" name="published" value="0">
                                             </form>
                                         <?php endif;?>

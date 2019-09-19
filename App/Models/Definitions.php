@@ -8,6 +8,7 @@ use DB\Connection;
 use Delight\Auth\Auth;
 use DI\ContainerBuilder;
 use League\Plates\Engine;
+use Valitron\Validator;
 
 class Definitions
 {

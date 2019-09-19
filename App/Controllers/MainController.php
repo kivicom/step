@@ -10,14 +10,12 @@ use App\Models\Pagination;
 class MainController
 {
     public $db;
-    private $pdo;
     public $templates;
     public $pagination;
     private $auth;
 
-    public function __construct(\PDO $pdo, Auth $auth, Comment $objComment, Engine $engine, Pagination $pagination)
+    public function __construct(Auth $auth, Comment $objComment, Engine $engine, Pagination $pagination)
     {
-        $this->pdo = $pdo;
         $this->auth = $auth;
         $this->db = $objComment;
         $this->templates = $engine;

@@ -16,6 +16,11 @@
 
                                     <div class="col-md-6">
                                         <input id="name" type="text" class="form-control" name="username" autofocus>
+                                        <?php if(isset($_SESSION['error']['username'])):?>
+                                            <span class="text-danger">
+                                            <?php echo $_SESSION['error']['username']; unset($_SESSION['error']['username']);?>
+                                        </span>
+                                        <?php endif;?>
                                     </div>
                                 </div>
 
@@ -24,12 +29,12 @@
 
                                     <div class="col-md-6">
                                         <input id="email" type="email" class="form-control" name="email" >
+                                        <?php if(isset($_SESSION['error']['email'])):?>
+                                            <span class="text-danger">
+                                                <?php echo $_SESSION['error']['email']; unset($_SESSION['error']['email']);?>
+                                            </span>
+                                        <?php endif;?>
                                     </div>
-                                    <?php if(isset($_SESSION['email_err'])):?>
-                                        <div class="alert alert-danger" role="alert">
-                                            <?php echo $_SESSION['email_err']; unset($_SESSION['email_err']);?>
-                                        </div>
-                                    <?php endif;?>
                                 </div>
 
                                 <div class="form-group row">
@@ -37,6 +42,11 @@
 
                                     <div class="col-md-6">
                                         <input id="password" type="password" class="form-control " name="password"  autocomplete="new-password">
+                                        <?php if(isset($_SESSION['error']['password'])):?>
+                                            <span class="text-danger">
+                                            <?php echo $_SESSION['error']['password']; unset($_SESSION['error']['password']);?>
+                                        </span>
+                                        <?php endif;?>
                                     </div>
                                 </div>
 
@@ -45,12 +55,12 @@
 
                                     <div class="col-md-6">
                                         <input id="password-confirm" type="password" class="form-control" name="password_confirmation"  autocomplete="new-password">
+                                        <?php if(isset($_SESSION['error']['password_confirmation'])):?>
+                                            <span class="text-danger">
+                                            <?php echo $_SESSION['error']['password_confirmation']; unset($_SESSION['error']['password_confirmation']);?>
+                                        </span>
+                                        <?php endif;?>
                                     </div>
-                                    <?php if(isset($_SESSION['pass_err'])):?>
-                                        <div class="alert alert-danger" role="alert">
-                                            <?php echo $_SESSION['pass_err']; unset($_SESSION['pass_err']);?>
-                                        </div>
-                                    <?php endif;?>
                                 </div>
 
                                 <div class="form-group row mb-0">
